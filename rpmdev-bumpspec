@@ -116,6 +116,11 @@ class SpecFile:
         sys.exit(1)
 
     def newVersion(self, vr):
+        """ Update version and release fields.
+
+        Returns True if the values changed.  False if they did not.
+        """
+
         rpos = vr.find('-')
         if rpos >= 0:  # set custom Release value
             r = vr[rpos+1:]
@@ -123,13 +128,20 @@ class SpecFile:
         else:
             r = "1%{?dist}"
             v = vr
+
+        changed = False
         for i in range(len(self.lines)):
+            original = self.lines[i]
             if self.lines[i].lower().startswith('version:'):
                 self.lines[i] = re.sub(
                     r'[^: \t]*$', v, self.lines[i].rstrip()) + '\n'
+                changed = changed or self.lines[i] != original
             elif self.lines[i].lower().startswith('release:'):
                 self.lines[i] = re.sub(
                     r'[^: \t]*$', r, self.lines[i].rstrip()) + '\n'
+                changed = changed or self.lines[i] != original
+
+        return changed
 
     _changelog_pattern = re.compile(r"^%changelog(\s|$)", re.I)
 
@@ -317,9 +329,15 @@ the Free Software Foundation; either version 2 of the License, or
             # Not actually a parser error, but... meh.
             parser.error(sys.exc_info()[1])
         if opts.new:
-            s.newVersion(opts.new)
+            changed = s.newVersion(opts.new)
         else:
             s.bumpRelease()
+            changed = True
+
+        # If we didn't change anything, no need to write and modify the changelog.
+        if not changed:
+            continue
+
         s.writeFile(aspec)
 
         # Get EVR for changelog entry.
