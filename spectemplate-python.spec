@@ -95,7 +95,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
-%doc
+%doc add-docs-here
 # For noarch packages: sitelib
 %{python2_sitelib}/*
 # For arch-specific packages: sitearch
@@ -103,7 +103,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with python3}
 %files -n 
-%doc
+%doc add-docs-here
 # For noarch packages: sitelib
 %{python3_sitelib}/*
 # For arch-specific packages: sitearch

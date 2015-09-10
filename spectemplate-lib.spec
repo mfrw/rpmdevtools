@@ -50,11 +50,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
-%doc
+%doc add-docs-here
 %{_libdir}/*.so.*
 
 %files devel
-%doc
+%doc add-docs-here
 %{_includedir}/*
 %{_libdir}/*.so
 

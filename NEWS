@@ -2,6 +2,7 @@ rpmdevtools x.x (201x-xx-xx)
 
   Ville Skyttä:
   - Use %make_build for rpm >= 4.12 in -newspec
+  - Add placeholders args for %doc in spec templates (#1256815)
 
   Ralph Bean:
   - Don't write changelog in -bumpspec if nothing changed

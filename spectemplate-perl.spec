@@ -48,7 +48,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
-%doc
+%doc add-docs-here
 # For noarch packages: vendorlib
 %{perl_vendorlib}/*
 # For arch-specific packages: vendorarch

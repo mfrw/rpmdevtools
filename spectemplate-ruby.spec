@@ -45,7 +45,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
-%doc
+%doc add-docs-here
 # For noarch packages: ruby_sitelib
 %{ruby_sitelib}/*
 # For arch-specific packages: ruby_sitearch

@@ -34,7 +34,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
-%doc
+%doc add-docs-here
 
 
 
