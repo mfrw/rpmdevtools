@@ -34,6 +34,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
+%{!?_licensedir:%global license %%doc}
+%license add-license-file-here
 %doc add-docs-here
 
 

@@ -67,6 +67,8 @@ fi
 
 
 %files
+%{!?_licensedir:%global license %%doc}
+%license add-license-file-here
 %doc %{pear_name}-%{version}/docdir/%{pear_name}/*
 %{pear_xmldir}/%{pear_name}.xml
 %{pear_testdir}/%{pear_name}

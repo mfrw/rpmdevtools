@@ -50,11 +50,13 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
-%doc add-docs-here
+%{!?_licensedir:%global license %%doc}
+%license add-license-file-here
+%doc add-main-docs-here
 %{_libdir}/*.so.*
 
 %files devel
-%doc add-docs-here
+%doc add-devel-docs-here
 %{_includedir}/*
 %{_libdir}/*.so
 

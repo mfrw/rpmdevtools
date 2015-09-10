@@ -63,7 +63,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
-%doc LICENSE
+%{!?_licensedir:%global license %%doc}
+%license LICENSE
 %dir %{_libdir}/ocaml/%{libname}/
 %if %opt
 %exclude %{_libdir}/ocaml/*/*.a
@@ -76,7 +77,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files devel
-%doc LICENSE README
+%license LICENSE
+%doc README
 %if %opt
 %{_libdir}/ocaml/*/*.a
 %{_libdir}/ocaml/*/*.cmxa

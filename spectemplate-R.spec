@@ -50,6 +50,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
+%{!?_licensedir:%global license %%doc}
+%license add-license-file-here
 %dir %{rlibdir}/%{packname}
 %doc %{rlibdir}/%{packname}/doc
 %doc %{rlibdir}/%{packname}/html

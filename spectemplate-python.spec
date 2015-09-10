@@ -95,6 +95,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
+%{!?_licensedir:%global license %%doc}
+%license add-license-file-here
 %doc add-docs-here
 # For noarch packages: sitelib
 %{python2_sitelib}/*
@@ -103,6 +105,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with python3}
 %files -n 
+%license add-license-file-here
 %doc add-docs-here
 # For noarch packages: sitelib
 %{python3_sitelib}/*
