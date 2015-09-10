@@ -253,6 +253,12 @@ if [[ $rpmver -ge 40800 ]] ; then # >= 4.8
     s|^make install DESTDIR=\\\$RPM_BUILD_ROOT|%make_install|Mg
 "
 fi
+if [[ $rpmver -ge 41200 ]] ; then # >= 4.12
+    # use %make_build instead of make %{?_smp_mflags}
+    specfilter+="
+    s|^make %\\{?\\?_smp_mflags\\}?|%make_build|Mg
+"
+fi
 
 if [[ $NEWSPEC_PREFER_MACROS ]] ; then
     # This assumes templates are written using the shell style variables,
