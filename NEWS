@@ -3,6 +3,9 @@ rpmdevtools x.x (201x-xx-xx)
   Ville Skyttä:
   - Use %make_build for rpm >= 4.12 in -newspec
 
+  Ralph Bean:
+  - Don't write changelog in -bumpspec if nothing changed
+
 rpmdevtools 8.6 (2015-05-10)
 
   Ville Skyttä:
