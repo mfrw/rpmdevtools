@@ -32,7 +32,7 @@ fi
 version()
 {
     cat <<EOF
-rpmdev-newspec version 2.3
+rpmdev-newspec version 2.4
 
 Copyright (c) Warren Togami <warren@togami.com>, Ville Skyttä
 <ville.skytta@iki.fi>
