@@ -270,6 +270,8 @@ the Free Software Foundation; either version 2 of the License, or
     parser = OptionParser(usage=usage)
     parser.add_option("-c", "--comment",
                       help="changelog comment (default: \"- rebuilt\")")
+    parser.add_option("-f", "--file",
+                      help="take changelog comment from the given file")
     parser.add_option("-u", "--userstring", default=userstring,
                       help="user name+email string (default: output from "
                       "rpmdev-packager(1))")
@@ -297,6 +299,10 @@ the Free Software Foundation; either version 2 of the License, or
 
     if not opts.userstring:
         parser.error('Userstring required, see option -u')
+
+    if opts.file:
+        with open(opts.file, 'r') as f:
+            opts.comment = f.read().rstrip()
 
     if not opts.comment:
         opts.comment = '- new version' if opts.new else '- rebuilt'
