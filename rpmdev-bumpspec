@@ -137,8 +137,9 @@ class SpecFile:
                     r'[^: \t]*$', v, self.lines[i].rstrip()) + '\n'
                 changed = changed or self.lines[i] != original
             elif self.lines[i].lower().startswith('release:'):
-                self.lines[i] = re.sub(
-                    r'[^: \t]*$', r, self.lines[i].rstrip()) + '\n'
+                # split and reconstruct to preserve whitespace
+                split = re.split(r':',self.lines[i].rstrip())
+                self.lines[i] = split[0] + ':' + re.sub(r'[^ \t]*$', r, split[1]) + '\n'
                 changed = changed or self.lines[i] != original
 
         return changed
