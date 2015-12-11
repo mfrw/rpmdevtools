@@ -8,6 +8,12 @@ rpmdevtools x.x (201x-xx-xx)
   Ralph Bean:
   - Don't write changelog in -bumpspec if nothing changed
 
+  Michael Schwendt:
+  - Make -bumpspec preserve whitespace in release lines
+
+  Jason Tibbitts:
+  - Add -f/--file option to -bumpspec (#1246273)
+
 rpmdevtools 8.6 (2015-05-10)
 
   Ville Skyttä:
