@@ -219,7 +219,7 @@ def main():
                 unresolved = ts.check()
                 if unresolved:
                     print("...whose removal would cause unresolved "
-                           "dependencies:")
+                          "dependencies:")
                     unresolved.sort(key=lambda x: x[0][0])
                     for t in unresolved:
                         dep = t[1][0]
