@@ -4,6 +4,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Use %make_build for rpm >= 4.12 in -newspec
   - Add placeholders args for %doc in spec templates (#1256815)
   - Add %license to spec templates (#1256815)
+  - Use %autosetup for rpm >= 4.11 in -newspec (#1290913)
 
   Ralph Bean:
   - Don't write changelog in -bumpspec if nothing changed

@@ -40,7 +40,7 @@ Group:          Development/Languages
 
 
 %prep
-%setup -qc
+%setup -q -c
 mv %{name}-%{version} python2
 
 %if %{with python3}

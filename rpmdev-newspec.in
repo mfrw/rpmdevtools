@@ -258,6 +258,10 @@ if [[ $rpmver -ge 41100 ]] ; then # >= 4.11
     specfilter+="
     s|^%\\{!\\?_licensedir:%global license %%doc\\}\\n||Mg
 "
+    # use %autosetup instead of %setup -q
+    specfilter+="
+    s|^%setup -q( \\|\$)|%autosetup\\1|Mg
+"
 fi
 if [[ $rpmver -ge 41200 ]] ; then # >= 4.12
     # use %make_build instead of make %{?_smp_mflags}
