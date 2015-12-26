@@ -17,6 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+import os
 import re
 import subprocess
 import sys
@@ -262,8 +263,9 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.''' % __version__
 
-    userstring = subprocess.Popen("rpmdev-packager 2>/dev/null", shell=True,
-                                  stdout=subprocess.PIPE).communicate()[0]
+    with open(os.devnull, "w") as devnull:
+        userstring = subprocess.Popen("rpmdev-packager", stderr=devnull,
+                                      stdout=subprocess.PIPE).communicate()[0]
     if sys.version_info[0] > 2:
         userstring = userstring.decode(errors='replace')
     userstring = userstring.strip() or None
