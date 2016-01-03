@@ -331,9 +331,9 @@ the Free Software Foundation; either version 2 of the License, or
     for aspec in args:
         try:
             s = SpecFile(aspec, opts.verbose, string)
-        except Exception:
+        except Exception as e:
             # Not actually a parser error, but... meh.
-            parser.error(sys.exc_info()[1])
+            parser.error(e)
         if opts.new:
             changed = s.newVersion(opts.new)
         else:
