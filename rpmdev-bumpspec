@@ -39,12 +39,8 @@ class SpecFile(object):
         self.string = string
 
         self.filename = filename
-        f = None
-        try:
-            f = open(filename, "r")
+        with open(filename) as f:
             self.lines = f.readlines()
-        finally:
-            f and f.close()
 
     # supported release value macro definitions
     _macro_bump_patterns = (
@@ -244,9 +240,8 @@ class SpecFile(object):
         return match.group(0).replace(old, new)
 
     def writeFile(self, filename):
-        f = open(filename, "w")
-        f.writelines(self.lines)
-        f.close()
+        with open(filename, "w"):
+            f.writelines(self.lines)
 
     def debugdiff(self, old, new):
         print('%s\n-%s\n+%s\n' % (self.filename, old, new))
@@ -305,7 +300,7 @@ the Free Software Foundation; either version 2 of the License, or
         parser.error('Userstring required, see option -u')
 
     if opts.file:
-        with open(opts.file, 'r') as f:
+        with open(opts.file) as f:
             opts.comment = f.read().rstrip()
 
     if not opts.comment:

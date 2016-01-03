@@ -60,7 +60,7 @@ def checkSig(ts, package):
     except OSError:
         return 100
     stderr = os.dup(2)
-    null = os.open("/dev/null", os.O_WRONLY | os.O_APPEND)
+    null = os.open(os.devnull, os.O_WRONLY | os.O_APPEND)
     os.dup2(null, 2)
     try:
         ts.hdrFromFdno(fdno)
@@ -73,15 +73,12 @@ def checkSig(ts, package):
             error = 104
         elif str(e) == "error reading package header":
             error = 100
+        return error
+    finally:
         os.dup2(stderr, 2)
         os.close(null)
         os.close(stderr)
         os.close(fdno)
-        return error
-    os.dup2(stderr, 2)
-    os.close(null)
-    os.close(stderr)
-    os.close(fdno)
     return 0
 
 
@@ -97,10 +94,11 @@ def returnHdr(ts, package):
         hdr = ts.hdrFromFdno(fdno)
     except rpm.error:
         hdr = None
+    finally:
+        os.close(fdno)
     if type(hdr) != rpm.hdr:
         hdr = None
     ts.setVSFlags(0)
-    os.close(fdno)
     return hdr
 
 
