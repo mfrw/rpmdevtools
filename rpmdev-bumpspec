@@ -17,13 +17,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+from optparse import OptionParser
 import os
 import re
 import subprocess
 import sys
 import textwrap
 import time
-from optparse import OptionParser
 
 
 __version__ = "1.0.13"
@@ -33,7 +33,7 @@ class BumpSpecError(Exception):
     pass
 
 
-class SpecFile:
+class SpecFile(object):
     def __init__(self, filename, verbose=False, string=None):
         self.verbose = verbose
         self.string = string
@@ -50,16 +50,16 @@ class SpecFile:
     _macro_bump_patterns = (
         re.compile(r"^%(?:define|global)\s+(?i)release\s+(\d+.*)"),
         re.compile(r"^%(?:define|global)\s+(?i)baserelease\s+(\d+.*)"),
-        )
+    )
     # normal "Release:" tag lines
     _tag_bump_patterns = (
         re.compile(r"^Release\s*:\s*(\d+.*)", re.I),
         re.compile(r"^Release\s*:\s+%release_func\s+(\d+.*)", re.I),
-        )
+    )
     # lines we don't want to mess with
     _skip_patterns = (
         re.compile(r"\$Revision:"),
-        )
+    )
 
     def bumpRelease(self):
         # remember whether we've bumped a macro definition
@@ -117,14 +117,15 @@ class SpecFile:
         sys.exit(1)
 
     def newVersion(self, vr):
-        """ Update version and release fields.
+        """
+        Update version and release fields.
 
         Returns True if the values changed.  False if they did not.
         """
 
         rpos = vr.find('-')
         if rpos >= 0:  # set custom Release value
-            r = vr[rpos+1:]
+            r = vr[rpos + 1:]
             v = vr[:rpos]
         else:
             r = "1%{?dist}"
@@ -207,7 +208,7 @@ class SpecFile:
         post = relmatch.group('post')
 
         newpost = self.increaseMain(post)
-        new = prefix+str(value)+jpp+newpost
+        new = prefix + str(value) + jpp + newpost
         return new
 
     def increaseFallback(self, release):
@@ -321,8 +322,8 @@ the Free Software Foundation; either version 2 of the License, or
 
     # Format comment.
     if opts.comment.find("\n") == -1:
-        wrapopts = {"subsequent_indent": (len(bullet)+1) * " ",
-                    "break_long_words":  False}
+        wrapopts = {"subsequent_indent": (len(bullet) + 1) * " ",
+                    "break_long_words": False}
         if sys.version_info[:2] > (2, 5):
             wrapopts["break_on_hyphens"] = False
         opts.comment = textwrap.fill(opts.comment, 80, **wrapopts)
@@ -335,7 +336,7 @@ the Free Software Foundation; either version 2 of the License, or
     for aspec in args:
         try:
             s = SpecFile(aspec, opts.verbose, string)
-        except:
+        except Exception:
             # Not actually a parser error, but... meh.
             parser.error(sys.exc_info()[1])
         if opts.new:

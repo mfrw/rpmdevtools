@@ -30,9 +30,9 @@
 # 103 = signed - but key not in rpmdb
 # 104 = signed but untrusted key
 
-import re
 import os
 import os.path
+import re
 import sys
 
 import rpm
@@ -50,9 +50,11 @@ def lookupKeyID(ts, keyid):
 
 
 def checkSig(ts, package):
-    """take a package, check its sigs, return 0 if they are all fine, return
+    """
+    Take a package, check its sigs, return 0 if they are all fine, return
     103 if the gpg key can't be found, 104 if the key is not trusted,
-    100 if the header is in someway damaged"""
+    100 if the header is in someway damaged.
+    """
     try:
         fdno = os.open(package, os.O_RDONLY)
     except OSError:

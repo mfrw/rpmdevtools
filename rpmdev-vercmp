@@ -62,7 +62,7 @@ def stringToEVR(verstring):
         release = ''
     else:
         version = verstring[i:j]
-        release = verstring[j+1:]
+        release = verstring[j + 1:]
     return (epoch, version, release)
 
 

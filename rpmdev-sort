@@ -62,7 +62,7 @@ def parse_nevr(s):
     return ("-".join(ss), e, v, r)
 
 
-class NevrLine:
+class NevrLine(object):
     line = None
     n = None
     e = None
