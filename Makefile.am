@@ -67,3 +67,10 @@ if HAVE_BASHCOMP2
 	cd $(DESTDIR)$(bashcompdir) && \
 	$(RM) rpmdev-{bumpspec,checksig,cksum,diff,extract,md5,newspec,rmdevelrpms,setuptree,sha{1,224,256,384,512},sum,vercmp} rpminfo rpmls spectool
 endif
+
+python_scripts = rpmdev-bumpspec rpmdev-checksig rpmdev-rmdevelrpms \
+	rpmdev-sort rpmdev-vercmp
+flake8 = flake8
+
+flake8: $(python_scripts)
+	$(flake8) $(python_scripts)
