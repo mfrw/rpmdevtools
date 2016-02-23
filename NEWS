@@ -16,6 +16,9 @@ rpmdevtools x.x (201x-xx-xx)
   Jason Tibbitts:
   - Add -f/--file option to -bumpspec (#1246273)
 
+  Carl George:
+  - Try git config for -packager info (#1311255)
+
 rpmdevtools 8.6 (2015-05-10)
 
   Ville Skyttä:
