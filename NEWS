@@ -1,4 +1,4 @@
-rpmdevtools x.x (201x-xx-xx)
+rpmdevtools 8.7 (2016-06-23)
 
   Ville Skyttä:
   - Use %make_build for rpm >= 4.12 in -newspec
