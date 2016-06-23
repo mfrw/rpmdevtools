@@ -42,7 +42,7 @@ spectool.1: spectool
 	COLUMNS=1000 $(HELP2MAN) -s 1 -N -h -h -v --version $(<D)/$(<F) -o $@
 
 %.1: %
-	COLUMNS=1000 $(HELP2MAN) -s 1 -N -h -h -v -v $(<D)/$(<F) -o $@
+	PATH="$(<D):$$PATH" COLUMNS=1000 $(HELP2MAN) -s 1 -N -h -h -v -v $(<F) -o $@
 
 %.8: %
 	COLUMNS=1000 $(HELP2MAN) -s 8 -N $(<D)/$(<F) -o $@
