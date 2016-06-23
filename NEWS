@@ -6,7 +6,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Add %license to spec templates (#1256815)
   - Use %autosetup for rpm >= 4.11 in -newspec (#1290913)
   - Don't use shell to invoke -packager in -bumpspec
-  - Fix -checksig with Python 3 (#1348737)
+  - Fix -checksig with Python 3; Python >= 2.7 is now required (#1348737)
 
   Ralph Bean:
   - Don't write changelog in -bumpspec if nothing changed
