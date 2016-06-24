@@ -10,6 +10,10 @@ Source0:
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      
+BuildRequires:  perl
+# Remove "BuildRequires:  perl-devel" for noarch packages (unneeded)
+BuildRequires:  perl-devel
+BuildRequires:  perl-generators
 # Correct for lots of packages, other common choices include eg. Module::Build
 BuildRequires:  perl(ExtUtils::MakeMaker)
 Requires:  perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))

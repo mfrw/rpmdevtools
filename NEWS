@@ -3,6 +3,9 @@ rpmdevtools x.x (201x-xx-xx)
   Ville Skyttä:
   - Fix build if no previous version of rpmdev-packager is installed
 
+  Petr Písař:
+  - Update perl spec template build dependencies (#1349884)
+
 rpmdevtools 8.7 (2016-06-23)
 
   Ville Skyttä:
