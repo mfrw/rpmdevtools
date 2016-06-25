@@ -1,4 +1,4 @@
-rpmdevtools x.x (201x-xx-xx)
+rpmdevtools 8.8 (2016-06-25)
 
   Ville Skyttä:
   - Fix build if no previous version of rpmdev-packager is installed
