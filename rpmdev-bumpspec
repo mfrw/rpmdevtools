@@ -240,7 +240,7 @@ class SpecFile(object):
         return match.group(0).replace(old, new)
 
     def writeFile(self, filename):
-        with open(filename, "w"):
+        with open(filename, "w") as f:
             f.writelines(self.lines)
 
     def debugdiff(self, old, new):
