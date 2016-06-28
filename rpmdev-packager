@@ -2,7 +2,7 @@
 
 # rpmdev-packager -- guess rpm packager info from various sources
 #
-# Copyright (c) 2009-2015 Ville Skyttä <ville.skytta@iki.fi>
+# Copyright (c) 2009-2016 Ville Skyttä <ville.skytta@iki.fi>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 version()
 {
     cat <<EOF
-rpmdev-packager version 1.2
+rpmdev-packager version 1.3
 
 Copyright (c) 2009-2015 Ville Skyttä <ville.skytta@iki.fi>
 This program is free software; you can redistribute it and/or modify
@@ -79,6 +79,7 @@ done
 
 username="$( id -un )"
 fullname="$( getent passwd $username 2>/dev/null | cut -d: -f5 )"
+fullname="${fullname%%,*}"
 certs=(~/.fedora.cert)
 
 # Try $RPM_PACKAGER
