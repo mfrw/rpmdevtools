@@ -66,7 +66,7 @@ case "$1" in
         if status $prog >/dev/null ; then
             restart
         fi
-	;;
+        ;;
     reload)
         # If config can be reloaded without restarting, implement it here,
         # remove the "exit", and add "reload" to the usage message below.

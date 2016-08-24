@@ -65,87 +65,87 @@ opt() {
     [ -z "$1" ] && return
 
     if [ -n "$opts" ]; then
-	[ $split -eq 0 ] && opts="${opts}, " || opts="${opts},"
+        [ $split -eq 0 ] && opts="${opts}, " || opts="${opts},"
     fi
     opts="${opts}$1"
 }
 
 check_rpath() {
-    [ $rpath -ne 1 ] && return 
+    [ $rpath -ne 1 ] && return
 
     local path=`$OBJDUMP -p "$1" 2>/dev/null | grep RPATH `
     if [ -n "$path" ]; then
-	path=`echo $path | awk '{print $2}'`
+        path=`echo $path | awk '{print $2}'`
         ## check rpath elements
-	local odd=0
-	if [ $test -eq 1 ]; then
-	    [ -z "$path" ] && odd=1
-	    OLDIFS=$IFS
-	    IFS=:
-	    for dir in $path; do
-		[ -z "$dir" ] && odd=1
-		[ "$dir" = "." ] && odd=2
-		[ "$dir" = "/lib" ] && odd=3
-		[ "$dir" = "/lib64" ] && odd=4
-		[ "$dir" = "/usr/lib" ] && odd=5
-		[ "$dir" = "/usr/lib64" ] && odd=6
-		[ "$dir" = "/usr/X11R6/lib" ] && odd=7
-		[ "$dir" = "/usr/X11R6/lib64" ] && odd=8
-		[ "${dir:0:10}" = "/usr/local" ] && odd=9
-		[ "${dir:0:12}" = "/usr/lib/qt-" ] && odd=10
-		[ "${dir:0:8}" = "/usr/src" ] && odd=11
-		echo $dir | grep -q "/\." && odd=12
-	    done
-	    IFS=$OLDIFS
-	fi
-	[ $odd -eq 0 ] && opt "RPATH $path" || opt "-RPATH $path"
+        local odd=0
+        if [ $test -eq 1 ]; then
+            [ -z "$path" ] && odd=1
+            OLDIFS=$IFS
+            IFS=:
+            for dir in $path; do
+                [ -z "$dir" ] && odd=1
+                [ "$dir" = "." ] && odd=2
+                [ "$dir" = "/lib" ] && odd=3
+                [ "$dir" = "/lib64" ] && odd=4
+                [ "$dir" = "/usr/lib" ] && odd=5
+                [ "$dir" = "/usr/lib64" ] && odd=6
+                [ "$dir" = "/usr/X11R6/lib" ] && odd=7
+                [ "$dir" = "/usr/X11R6/lib64" ] && odd=8
+                [ "${dir:0:10}" = "/usr/local" ] && odd=9
+                [ "${dir:0:12}" = "/usr/lib/qt-" ] && odd=10
+                [ "${dir:0:8}" = "/usr/src" ] && odd=11
+                echo $dir | grep -q "/\." && odd=12
+            done
+            IFS=$OLDIFS
+        fi
+        [ $odd -eq 0 ] && opt "RPATH $path" || opt "-RPATH $path"
     fi
 }
 
 check_file() {
     local file=$1
-    
+
     [ -L "$file" ] && return
     [ ! -f "$file" ] && return
-    
+
     file -b "$file" 2>/dev/null | grep -q ELF || return
-    
+
     if $EU_READELF -h "$file" 2>/dev/null | grep -q 'Type:[[:space:]]*EXEC';
     then
-	if [ $exec -eq 1 ]; then
-	    if $READELF -d "$file" 2>/dev/null | grep -q TEXTREL; then
-		if [ -u "$file" ]; then
-		    [ $no_pie -eq 1 ] && opt "!PIE"
-		else
-		    [ $no_pic -eq 1 ] && opt "!PIC"
-		fi
-	    else
-		# suid
-		if [ -u "$file" ]; then
-		    [ $no_pie -eq 1 ] && opt "!PIE"
-		else
-		    [ $pic -eq 1 ] && opt "PIC"
-		fi
-	    fi
-	    check_rpath "$file"
-	fi
+        if [ $exec -eq 1 ]; then
+            if $READELF -d "$file" 2>/dev/null | grep -q TEXTREL; then
+                if [ -u "$file" ]; then
+                    [ $no_pie -eq 1 ] && opt "!PIE"
+                else
+                    [ $no_pic -eq 1 ] && opt "!PIC"
+                fi
+            else
+                # suid
+                if [ -u "$file" ]; then
+                    [ $no_pie -eq 1 ] && opt "!PIE"
+                else
+                    [ $pic -eq 1 ] && opt "PIC"
+                fi
+            fi
+            check_rpath "$file"
+        fi
     else
-	if $EU_READELF -d "$file" 2>/dev/null | grep -q '  DEBUG[[:space:]]*$';
-	then
-	    if [ $exec -eq 1 ]; then
-		[ $pie -eq 1 ] && opt "PIE"
-		check_rpath "$file"
-	    fi
-	else
-	    if [ $lib -eq 1 ]; then
-		if $READELF -d "$file" 2>/dev/null | grep -q TEXTREL; then
-		    [ $no_pic -eq 1 ] && opt "DSO !PIC"
-		else
-		    [ $pic -eq 1 ] && opt "DSO PIC"
-		fi
-		check_rpath "$file"
-	    fi
-	fi
+        if $EU_READELF -d "$file" 2>/dev/null | grep -q '  DEBUG[[:space:]]*$';
+        then
+            if [ $exec -eq 1 ]; then
+                [ $pie -eq 1 ] && opt "PIE"
+                check_rpath "$file"
+            fi
+        else
+            if [ $lib -eq 1 ]; then
+                if $READELF -d "$file" 2>/dev/null | grep -q TEXTREL; then
+                    [ $no_pic -eq 1 ] && opt "DSO !PIC"
+                else
+                    [ $pic -eq 1 ] && opt "DSO PIC"
+                fi
+                check_rpath "$file"
+            fi
+        fi
     fi
 }
 
@@ -157,43 +157,43 @@ check_package() {
     local files=`rpm -ql --nodigest --nosignature $package 2>/dev/null`
 
     if echo $files | grep -q "not installed"; then
-	# not installed
-	if [ -f $package ]; then
-	    rpm -qp --nodigest --nosignature $package >& /dev/null
-	    if [ $? -eq 1 ]; then
-		# no rpm package
-		package=
-	    else
-		prefix=$temp_prefix`basename $package`
-		if [ ${package:0:1} != "/" ]; then
-		    package=`pwd`"/"$package
-		fi
-		local error=0
-		mkdir $prefix 2> /dev/null && pushd "$prefix" >& /dev/null
-		if [ $? -eq 0 ]; then
-		    rpm2cpio "$package" \
-			| cpio -i --make-directories >& /dev/null
-		    [ $? -eq 0 ] || echo "Error while extracting package '$package'.. ignoring!" > /dev/stderr
-		    files=`rpm -qlp --nodigest --nosignature $package 2>/dev/null`
-		    popd >& /dev/null
-		    chmod -R u+rwx $prefix 2>/dev/null 
-		else
-		    error=1
-		fi
-		if [ $error -eq 1 ]; then
-		    echo "Can not create package directory.. skipping package '$package'!" > /dev/stderr
-		    return
-		fi
-	    fi 
-	else
-	    # not a file
-	    package=
-	fi
+        # not installed
+        if [ -f $package ]; then
+            rpm -qp --nodigest --nosignature $package >& /dev/null
+            if [ $? -eq 1 ]; then
+                # no rpm package
+                package=
+            else
+                prefix=$temp_prefix`basename $package`
+                if [ ${package:0:1} != "/" ]; then
+                    package=`pwd`"/"$package
+                fi
+                local error=0
+                mkdir $prefix 2> /dev/null && pushd "$prefix" >& /dev/null
+                if [ $? -eq 0 ]; then
+                    rpm2cpio "$package" \
+                        | cpio -i --make-directories >& /dev/null
+                    [ $? -eq 0 ] || echo "Error while extracting package '$package'.. ignoring!" > /dev/stderr
+                    files=`rpm -qlp --nodigest --nosignature $package 2>/dev/null`
+                    popd >& /dev/null
+                    chmod -R u+rwx $prefix 2>/dev/null
+                else
+                    error=1
+                fi
+                if [ $error -eq 1 ]; then
+                    echo "Can not create package directory.. skipping package '$package'!" > /dev/stderr
+                    return
+                fi
+            fi
+        else
+            # not a file
+            package=
+        fi
     fi
 
     if [ -z "$package" ]; then
-	echo "'$1' is not installed and is no rpm package..  skipping!" > /dev/stderr
-	return
+        echo "'$1' is not installed and is no rpm package..  skipping!" > /dev/stderr
+        return
     fi
 
     local in_pie=0
@@ -206,56 +206,56 @@ check_package() {
     local in_rpath_odd=0
 
     for file in $files; do
-	opts=
+        opts=
 
-	check_file "$prefix$file"
+        check_file "$prefix$file"
 
-	[ -z "$opts" ] && continue
-		
-	if [ $split -eq 1 ]; then
-	    pkg=`basename $package`
-	    OLDIFS=$IFS
-	    IFS=,
-	    for opt in $opts; do
-		o=
-		[ "$opt" = "PIE" ] && o=pie
-		[ "$opt" = "!PIE" ] && o=non_pie
-		[ "$opt" = "PIC" ] && o=pic
-		[ "$opt" = "DSO PIC" ] && o=dso_pic
-		[ "$opt" = "!PIC" ] && o=non_pic
-		[ "$opt" = "DSO !PIC" ] && o=dso_non_pic
-		[ "${opt:0:6}" = "RPATH " ] && o=rpath && opt=${opt:6}
-		[ "${opt:0:7}" = "-RPATH " ] && o=rpath_odd && opt=${opt:7}
-		if [ -n "$o" ]; then
-		    eval local in=\${in_$o}
-		    if [ $in -eq 0 ]; then
-			echo -e "\n$pkg" >> $output.$o
-			eval in_$o=1
-		    fi
-		    if [ "${o:0:5}" = "rpath" -a $quiet -lt 2 ]; then
-			echo -e "\t$file\tRPATH $opt" >> $output.$o
-		    else
-			echo -e "\t$file" >> $output.$o
-		    fi
-		fi
-	    done
-	    IFS=$OLDIFS
-	else
-	    if [ -z "$pkg" ]; then
-		pkg=`basename $package`
-		echo -e "\n$pkg" >> $output
-	    fi
-	    
-	    if [ $quiet -eq 0 ]; then
-		echo -e "\t$file\t$opts" >> $output
-	    else
-		echo -e "\t$file" >> $output
-	    fi
-	fi
+        [ -z "$opts" ] && continue
+
+        if [ $split -eq 1 ]; then
+            pkg=`basename $package`
+            OLDIFS=$IFS
+            IFS=,
+            for opt in $opts; do
+                o=
+                [ "$opt" = "PIE" ] && o=pie
+                [ "$opt" = "!PIE" ] && o=non_pie
+                [ "$opt" = "PIC" ] && o=pic
+                [ "$opt" = "DSO PIC" ] && o=dso_pic
+                [ "$opt" = "!PIC" ] && o=non_pic
+                [ "$opt" = "DSO !PIC" ] && o=dso_non_pic
+                [ "${opt:0:6}" = "RPATH " ] && o=rpath && opt=${opt:6}
+                [ "${opt:0:7}" = "-RPATH " ] && o=rpath_odd && opt=${opt:7}
+                if [ -n "$o" ]; then
+                    eval local in=\${in_$o}
+                    if [ $in -eq 0 ]; then
+                        echo -e "\n$pkg" >> $output.$o
+                        eval in_$o=1
+                    fi
+                    if [ "${o:0:5}" = "rpath" -a $quiet -lt 2 ]; then
+                        echo -e "\t$file\tRPATH $opt" >> $output.$o
+                    else
+                        echo -e "\t$file" >> $output.$o
+                    fi
+                fi
+            done
+            IFS=$OLDIFS
+        else
+            if [ -z "$pkg" ]; then
+                pkg=`basename $package`
+                echo -e "\n$pkg" >> $output
+            fi
+
+            if [ $quiet -eq 0 ]; then
+                echo -e "\t$file\t$opts" >> $output
+            else
+                echo -e "\t$file" >> $output
+            fi
+        fi
     done
 
     if [ -n "$prefix" ]; then
-	rm -rf $prefix
+        rm -rf $prefix
     fi
 }
 
@@ -277,38 +277,38 @@ while [ $OPTIND -le $# ]; do
     eval pkg=\${$OPTIND}
 
     if [ ${pkg:0:1} = "-" ]; then
-	[ "$pkg" = "-h" -o "$pkg" = "--help" ] && usage 0
-	[ "$pkg" = "-v" -o "$pkg" = "--verbose" ] && verbose=1
-	[ "$pkg" = "-q" -o "$pkg" = "--quiet" ] && quiet=1
-	[ "$pkg" = "-qq" ] && quiet=2
-	[ "$pkg" = "-i" -o "$pkg" = "--installed" ] && installed=1
-	[ "$pkg" = "-e" -o "$pkg" = "--executables" ] && exec=1
-	[ "$pkg" = "-l" -o "$pkg" = "--libraries" ] && lib=1
-	[ "$pkg" = "-p" -o "$pkg" = "--pic" ] && pic=1
-	[ "$pkg" = "-np" -o "$pkg" = "--no_pic" ] && no_pic=1
-	[ "$pkg" = "-P" -o "$pkg" = "--pie" ] && pie=1
-	[ "$pkg" = "-nP" -o "$pkg" = "--no_pie" ] && no_pie=1
-	[ "$pkg" = "-r" -o "$pkg" = "--rpath" ] && rpath=1
-	[ "$pkg" = "-s" -o "$pkg" = "--split" ] && split=1
-	[ "$pkg" = "-t" -o "$pkg" = "--test" ] && test=1
-	if [ "$pkg" = "-o" ]; then
-	    OPTIND=$((OPTIND+1))
-	    eval output=\${$OPTIND}
-	fi
-	if [ "${pkg:0:9}" = "--output=" ]; then
-	    output=${pkg:9};
-	fi
-	if [ "$pkg" = "-T" ]; then
-	    OPTIND=$((OPTIND+1))
-	    eval TMPDIR=\${$OPTIND}
-	fi
-	if [ "${pkg:0:10}" = "--tmp-dir=" ]; then
-	    TMPDIR=${pkg:10};
-	fi
+        [ "$pkg" = "-h" -o "$pkg" = "--help" ] && usage 0
+        [ "$pkg" = "-v" -o "$pkg" = "--verbose" ] && verbose=1
+        [ "$pkg" = "-q" -o "$pkg" = "--quiet" ] && quiet=1
+        [ "$pkg" = "-qq" ] && quiet=2
+        [ "$pkg" = "-i" -o "$pkg" = "--installed" ] && installed=1
+        [ "$pkg" = "-e" -o "$pkg" = "--executables" ] && exec=1
+        [ "$pkg" = "-l" -o "$pkg" = "--libraries" ] && lib=1
+        [ "$pkg" = "-p" -o "$pkg" = "--pic" ] && pic=1
+        [ "$pkg" = "-np" -o "$pkg" = "--no_pic" ] && no_pic=1
+        [ "$pkg" = "-P" -o "$pkg" = "--pie" ] && pie=1
+        [ "$pkg" = "-nP" -o "$pkg" = "--no_pie" ] && no_pie=1
+        [ "$pkg" = "-r" -o "$pkg" = "--rpath" ] && rpath=1
+        [ "$pkg" = "-s" -o "$pkg" = "--split" ] && split=1
+        [ "$pkg" = "-t" -o "$pkg" = "--test" ] && test=1
+        if [ "$pkg" = "-o" ]; then
+            OPTIND=$((OPTIND+1))
+            eval output=\${$OPTIND}
+        fi
+        if [ "${pkg:0:9}" = "--output=" ]; then
+            output=${pkg:9};
+        fi
+        if [ "$pkg" = "-T" ]; then
+            OPTIND=$((OPTIND+1))
+            eval TMPDIR=\${$OPTIND}
+        fi
+        if [ "${pkg:0:10}" = "--tmp-dir=" ]; then
+            TMPDIR=${pkg:10};
+        fi
     else
-	packages="$packages $pkg"
+        packages="$packages $pkg"
     fi
-    
+
     OPTIND=$((OPTIND+1))
 done
 
@@ -342,10 +342,10 @@ fi
 
 if [ $split -eq 1 ]; then
     if [ -z "$output" ]; then
-	echo "You can not use split without an output file prefix.. exiting!"
-	exit -1
+        echo "You can not use split without an output file prefix.. exiting!"
+        exit -1
     else
-	rm -f $output.*
+        rm -f $output.*
     fi
 fi
 [ -n "$output" ] && rm -f $output || output=/dev/stdout
@@ -367,14 +367,14 @@ pkg_no=1
 for pkg in $packages; do
     tmp=`rpm -q --nodigest --nosignature $pkg | sort -u 2>/dev/null`
     [ $verbose -eq 1 ] && \
-	printf "(%*d/%d) => %s\n" ${#pkg_num} $pkg_no $pkg_num $pkg \
-	> /dev/stderr
+        printf "(%*d/%d) => %s\n" ${#pkg_num} $pkg_no $pkg_num $pkg \
+        > /dev/stderr
     if echo $tmp | grep -q "not installed"; then
-	check_package $pkg
+        check_package $pkg
     else
-	for package in $tmp; do
-	    check_package $package
-	done
+        for package in $tmp; do
+            check_package $package
+        done
     fi
     pkg_no=$((pkg_no+1))
 done
@@ -382,7 +382,7 @@ done
 if [ $installed -eq 1 ]; then
     rpmqa=`rpm -qa --nodigest --nosignature | sort -u`
     for i in $rpmqa; do
-	check_package "$i"
+        check_package "$i"
     done
 fi
 

@@ -180,26 +180,26 @@ cd "$tmpdir"
 
 # Did the archives uncompress into base dirs?
 if [[ $(ls -1d old/* | wc -l) -eq 1 ]] ; then
-  old=$(ls -1d old/*)
+    old=$(ls -1d old/*)
 else
-  old=old
+    old=old
 fi
 if [[ $(ls -1d new/* | wc -l) -eq 1 ]] ; then
-  new=$(ls -1d new/*)
+    new=$(ls -1d new/*)
 else
-  new=new
+    new=new
 fi
 
 # Fixup base dirs to the same level.
 if [[ $(basename "$old") != $(basename "$new") ]] ; then
-  if [[ $old != old ]] ; then
-    mv "$old" .
-    old=`basename "$old"`
-  fi
-  if [[ $new != new ]] ; then
-    mv "$new" .
-    new=`basename "$new"`
-  fi
+    if [[ $old != old ]] ; then
+        mv "$old" .
+        old=`basename "$old"`
+    fi
+    if [[ $new != new ]] ; then
+        mv "$new" .
+        new=`basename "$new"`
+    fi
 fi
 
 # Contents mode is the default.
@@ -234,11 +234,11 @@ if $long ; then
     find "$old" -ls | \
         perl -pe "s|^(?:[\d\s]*)(\S+)(?:\s+\d+)(.+)$|\1\2| ;
                   s|.*\s\Q$old\E$|| ; s|(\s)\Q$old/\E|\1|" | \
-        sort > "$old.files"
+                      sort > "$old.files"
     find "$new" -ls | \
         perl -pe "s|^(?:[\d\s]*)(\S+)(?:\s+\d+)(.+)$|\1\2| ;
                   s|.*\s\Q$new\E$|| ; s|(\s)\Q$new/\E|\1|" | \
-        sort > "$new.files"
+                      sort > "$new.files"
     set +e
     diff ${diffopts:-$diffoopts} "$old.files" "$new.files"
     [[ $? -eq 0 || $? -eq 1 ]] || exit $?
