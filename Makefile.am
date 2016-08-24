@@ -74,3 +74,15 @@ flake8 = flake8
 
 flake8: $(python_scripts)
 	$(flake8) $(python_scripts)
+
+shell_scripts = rpmdev-diff rpmdev-extract rpmdev-md5 rpmdev-newinit \
+	rpmdev-newspec rpmdev-packager rpmdev-setuptree rpmdev-wipetree \
+	rpminfo rpmls template.init
+bashate = bashate
+shellcheck = shellcheck
+
+bashate: $(shell_scripts)
+	$(bashate) $(shell_scripts)
+
+shellcheck: $(shell_scripts)
+	$(shellcheck) $(shell_scripts)
