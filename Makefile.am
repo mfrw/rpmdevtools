@@ -86,3 +86,10 @@ bashate: $(shell_scripts)
 
 shellcheck: $(shell_scripts)
 	$(shellcheck) $(shell_scripts)
+
+check-local: $(shell_scripts)
+	ret=0
+	for file in $(shell_scripts) ; do \
+		bash -n -O extglob $$file || ret=$$? ; \
+	done ; \
+	exit $$ret
