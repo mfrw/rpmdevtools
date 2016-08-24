@@ -268,7 +268,8 @@ for conf in ("__SYSCONFDIR__/rpmdevtools/rmdevelrpms.conf",
              os.path.join(os.environ["HOME"],
                           ".config/rpmdevtools/rmdevelrpms.conf")):
     try:
-        exec(compile(open(conf).read(), conf, "exec"))
+        with open(conf) as f:
+            exec(compile(f.read(), conf, "exec"))
     except IOError:
         pass
     if hasattr(devpkgs, "split"):
