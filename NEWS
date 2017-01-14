@@ -1,4 +1,4 @@
-rpmdevtools x.x (201x-xx-xx)
+rpmdevtools 8.10 (2017-01-14)
 
   Ville Skyttä:
   - Extract (only) full name from gecos field in -packager (#1350928)
