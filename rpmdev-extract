@@ -1,6 +1,10 @@
 #!/bin/bash
 # -*- coding: utf-8 -*-
 
+# TODO: *.pkg ->
+#  xar -xf *.pkg
+#  gunzip and cpio -ivdum all Payload files
+
 # rpmdev-extract -- Extract various archives in "tar xvf" style
 #
 # Copyright (c) 2004-2014 Ville Skyttä <ville.skytta@iki.fi>
