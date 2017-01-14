@@ -52,7 +52,7 @@ EOF
     usage
     echo ""
     echo "Report bugs at <https://bugzilla.redhat.com/>, component rpmdevtools,"
-    echo "or at <https://fedorahosted.org/rpmdevtools/>."
+    echo "or at <https://pagure.io/rpmdevtools/issues>."
 }
 
 usage() {
