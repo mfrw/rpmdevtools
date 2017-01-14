@@ -80,6 +80,9 @@ done
 username="$( id -un )"
 fullname="$( getent passwd $username 2>/dev/null | cut -d: -f5 )"
 fullname="${fullname%%,*}"
+# TODO obsolete, should use kerberos instead? e.g.
+#   https://pagure.io/rpkg/blob/master/f/pyrpkg/__init__.py#_823
+#   https://pagure.io/fedora-packager/c/715483c1bbdf5cceaeb63e90410139
 certs=(~/.fedora.cert)
 
 # Try $RPM_PACKAGER
