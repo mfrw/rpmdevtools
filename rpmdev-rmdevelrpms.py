@@ -38,15 +38,15 @@ except NameError:
 __version__ = "1.15"
 
 
-dev_re = re.compile("-(?:de(?:buginfo|vel)|sdk|static)\\b", re.IGNORECASE)
-test_re = re.compile("^perl-(?:Devel|ExtUtils|Test)-")
-lib_re1 = re.compile("^lib.+")
-lib_re2 = re.compile("-libs?$")
-a_re = re.compile(b"\\w\\.a$")
-so_re = re.compile(b"\\w\\.so(?:\\.\\d+)*$")
-comp_re = re.compile("^compat-gcc")
+dev_re = re.compile(r"-(?:de(?:buginfo|vel)|sdk|static)\b", re.IGNORECASE)
+test_re = re.compile(r"^perl-(?:Devel|ExtUtils|Test)-")
+lib_re1 = re.compile(r"^lib.+")
+lib_re2 = re.compile(r"-libs?$")
+a_re = re.compile(rb"\w\.a$")
+so_re = re.compile(rb"\w\.so(?:\.\d+)*$")
+comp_re = re.compile(r"^compat-gcc")
 # required by Ant, which is required by Eclipse...
-jdev_re = re.compile("^java-.+-gcj-compat-devel$")
+jdev_re = re.compile(r"^java-.+-gcj-compat-devel$")
 
 
 def_devpkgs = \
