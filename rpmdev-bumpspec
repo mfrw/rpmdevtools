@@ -44,8 +44,10 @@ class SpecFile(object):
 
     # supported release value macro definitions
     _macro_bump_patterns = (
-        re.compile(r"^%(?:define|global)\s+(?i)release\s+(\d+.*)"),
-        re.compile(r"^%(?:define|global)\s+(?i)baserelease\s+(\d+.*)"),
+        re.compile(r"^%(?:define|global)\s+"
+                   r"[Rr][Ee][Ll][Ee][Aa][Ss][Ee]\s+(\d+.*)"),
+        re.compile(r"^%(?:define|global)\s+"
+                   r"[Bb][Aa][Ss][Ee][Rr][Ee][Ll][Ee][Aa][Ss][Ee]\s+(\d+.*)"),
     )
     # normal "Release:" tag lines
     _tag_bump_patterns = (

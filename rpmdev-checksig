@@ -44,7 +44,7 @@ def lookupKeyID(ts, keyid):
     mi.pattern('version', rpm.RPMMIRE_STRCMP, keyid)
     for hdr in mi:
         sum = hdr['summary']
-        mo = re.search(b'\<.*\>', sum)
+        mo = re.search(rb'\<.*\>', sum)
         email = mo.group().decode(errors='replace')
         return email
 
