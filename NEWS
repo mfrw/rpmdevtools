@@ -1,3 +1,8 @@
+rpmdevtools x.xx (201x-xx-xx)
+
+  Ville Skyttä:
+  - Python 3.6 invalid escape sequence deprecation fixes
+
 rpmdevtools 8.10 (2017-01-14)
 
   Ville Skyttä:
