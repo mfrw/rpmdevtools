@@ -134,13 +134,13 @@ class SpecFile(object):
             original = self.lines[i]
             if self.lines[i].lower().startswith('version:'):
                 self.lines[i] = re.sub(
-                    r'[^: \t]*$', v, self.lines[i].rstrip()) + '\n'
+                    r'[^: \t]*$', v, self.lines[i].rstrip(), count=1) + '\n'
                 changed = changed or self.lines[i] != original
             elif self.lines[i].lower().startswith('release:'):
                 # split and reconstruct to preserve whitespace
                 split = re.split(r':', self.lines[i].rstrip())
                 self.lines[i] = split[0] + ':' + \
-                    re.sub(r'[^ \t]*$', r, split[1]) + '\n'
+                    re.sub(r'[^ \t]*$', r, split[1], count=1) + '\n'
                 changed = changed or self.lines[i] != original
 
         return changed
