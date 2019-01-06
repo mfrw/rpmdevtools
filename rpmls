@@ -16,15 +16,49 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+set -u
+
+all=
 owner=
-if [ "$1" = "-l" ] ; then
-    owner='%-8{fileusername} %-8{filegroupname} '
-    shift
-fi
+
+usage() {
+	cat <<-EOF
+	rpmls -- List contents of rpm packages
+
+	Usage: rpmls [-a] [-l] PKG...
+	       rpmls -?
+
+	Options:
+	   -a  list all packages matching a PKG
+	   -l  use a long listing format
+	   -?  print this help and exit
+
+	The PKG arguments may either be package
+	name expressions or file names.
+	EOF
+	exit
+}
+
+while getopts 'al?' opt
+do
+	case $opt in
+	a) all=a ;;
+	l) owner='%-8{fileusername} %-8{filegroupname} ' ;;
+	?) usage ;;
+	esac
+done
+
+shift $((OPTIND - 1))
+
 qf="[%-11{filemodes:perms} $owner%{filenames}\\n]"
 
 for arg in "$@" ; do
-    p=
-    case "$arg" in *.[rs]pm) p=p ;; esac
-    rpm -q$p --qf="$qf" --nodigest --nosignature "$arg"
+	a=$all
+	p=
+	if [ -f "$arg" ]
+	then
+		a=
+		p=p
+	fi
+	rpm -q$a$p --qf="$qf" --nodigest --nosignature "$arg"
 done
