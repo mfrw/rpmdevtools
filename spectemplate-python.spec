@@ -1,117 +1,65 @@
-# sitelib for noarch packages, sitearch for others (remove the unneeded one)
-%{!?__python2: %global __python2 %__python}
-%{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
-
-%if 0%{?fedora}
-%bcond_without python3
-%else
-%bcond_with python3
-%endif
-
-Name:           
+%global %pypi_name ...
+Name:           python-%{pypi_name}
 Version:        
 Release:        1%{?dist}
 Summary:        
-
-Group:          Development/Languages
 License:        
 URL:            
-Source0:        
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Source0:        %{pypi_source}
 
 BuildArch:      
-BuildRequires:  python2-devel
-%if %{with python3}
-BuildRequires:  python3-devel
-%endif # with python3
+
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-setuptools
+
+%{?python_enable_dependency_generator}
 
 %description
+...
 
 
-%if %{with python3}
-%package     -n 
-Summary:        
-Group:          Development/Languages
+%package -n python%{python3_pkgversion}-%{pypi_name}
+Summary:        %{summary}
+%{?python_provide:%python_provide python3-%{pypi_name}}
 
-%description -n 
+%if %{defined epel}
+# Put manual requires here:
+Requires:       python%{python3_pkgversion}-foo
+%endif
 
-%endif # with python3
+%description -n python%{python3_pkgversion}-%{pypi_name}
+...
 
 
 %prep
-%setup -q -c
-mv %{name}-%{version} python2
-
-%if %{with python3}
-cp -a python2 python3
-%endif # with python3
+%autosetup -p1
 
 
 %build
-pushd python2
-# Remove CFLAGS=... for noarch packages (unneeded)
-CFLAGS="$RPM_OPT_FLAGS" %{__python2} setup.py build
-popd
-
-%if %{with python3}
-pushd python3
-# Remove CFLAGS=... for noarch packages (unneeded)
-CFLAGS="$RPM_OPT_FLAGS" %{__python3} setup.py build
-popd
-%endif # with python3
+%py3_build
 
 
 %install
-rm -rf $RPM_BUILD_ROOT
-# Must do the python3 install first because the scripts in /usr/bin are
-# overwritten with every setup.py install (and we want the python2 version
-# to be the default for now).
-%if %{with python3}
-pushd python3
-%{__python3} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
-popd
-%endif # with python3
-
-pushd python2
-%{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
-popd
+%py3_install
 
 
 %check
-pushd python2
-%{__python2} setup.py test
-popd
-
-%if %{with python3}
-pushd python3
+# use what your upstream is using
 %{__python3} setup.py test
-popd
-%endif
+%{__python3} -m pytest
+%{__python3} -m nose
+...
 
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-
-%files
-%{!?_licensedir:%global license %%doc}
+%files -n  python%{python3_pkgversion}-%{pypi_name}
 %license add-license-file-here
 %doc add-docs-here
 # For noarch packages: sitelib
-%{python2_sitelib}/*
+%{python3_sitelib}/%{pypi_name}/
+%{python3_sitelib}/%{pypi_name}-%{version}-py%{python3_version}.egg-info/
 # For arch-specific packages: sitearch
-%{python2_sitearch}/*
-
-%if %{with python3}
-%files -n 
-%license add-license-file-here
-%doc add-docs-here
-# For noarch packages: sitelib
-%{python3_sitelib}/*
-# For arch-specific packages: sitearch
-%{python3_sitearch}/*
-%endif # with python3
+%{python3_sitearch}/%{pypi_name}/
+%{python3_sitelib}/%{pypi_name}-%{version}-py%{python3_version}.egg-info/
 
 
 %changelog
