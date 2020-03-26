@@ -198,7 +198,7 @@ sub retrievable {
 sub retrieve {
 	my ($where, $url) = @_;
 	if (retrievable ($url)) {
-		my $path = File::Spec->catfile($where, $url =~ m|([^/]+)$|);
+		my $path = File::Spec->catfile($where, $url =~ m|([^\/]+?)(?:\?.*)?$|);
 		print "Getting $url to $path\n";
 		if (-e $path) {
 			if ($force) {
