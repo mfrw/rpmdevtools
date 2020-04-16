@@ -45,7 +45,6 @@ make opt
 
 
 %install
-rm -rf $RPM_BUILD_ROOT
 # These rules work if the library uses 'ocamlfind install' to install itself.
 export DESTDIR=$RPM_BUILD_ROOT
 export OCAMLFIND_DESTDIR=$RPM_BUILD_ROOT%{_libdir}/ocaml

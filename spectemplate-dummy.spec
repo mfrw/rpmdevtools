@@ -16,7 +16,6 @@ URL:            http://fedoraproject.org/
 
 
 %install
-rm -rf $RPM_BUILD_ROOT
 
 
 %files

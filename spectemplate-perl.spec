@@ -32,7 +32,6 @@ make %{?_smp_mflags}
 
 
 %install
-rm -rf $RPM_BUILD_ROOT
 make pure_install DESTDIR=$RPM_BUILD_ROOT
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 # Remove the next line from noarch packages (unneeded)

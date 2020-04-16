@@ -32,7 +32,6 @@ Requires:       R-core
 
 
 %install
-rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT%{rlibdir}
 %{_bindir}/R CMD INSTALL -l $RPM_BUILD_ROOT%{rlibdir} %{packname}
 test -d %{packname}/src && (cd %{packname}/src; rm -f *.o *.so)

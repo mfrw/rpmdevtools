@@ -34,7 +34,7 @@ cd %{pear_name}-%{version}
 
 %install
 cd %{pear_name}-%{version}
-rm -rf $RPM_BUILD_ROOT docdir
+rm -rf docdir
 %{__pear} install --nodeps --packagingroot $RPM_BUILD_ROOT %{pear_name}.xml
 
 # Move documentation
