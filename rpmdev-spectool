@@ -207,17 +207,18 @@ def split_numbers(args: str) -> list:
     return list(arg for arg in args.split(","))
 
 
-def get_file(url: str, path: str, force: bool):
+def get_file(url: str, path: str, force: bool) -> bool:
     if os.path.exists(path):
         if force:
             os.remove(path)
         else:
             print("File '{}' already present.".format(path))
-            return
+            return False
 
     response = requests.get(url)
     with open(path, "wb") as file:
         file.write(response.content)
+    return True
 
 
 class Spec:
@@ -296,8 +297,9 @@ class Spec:
             if not dry:
                 try:
                     print("Downloading: {}".format(value))
-                    get_file(value, os.path.join(directory, basename), force)
-                    print("Downloaded: {}".format(basename))
+                    really = get_file(value, os.path.join(directory, basename), force)
+                    if really:
+                        print("Downloaded: {}".format(basename))
                 except IOError as e:
                     print("Download failed:")
                     print(e)
