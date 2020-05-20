@@ -27,7 +27,8 @@ import tempfile
 from collections import OrderedDict
 from urllib.parse import urlparse
 
-import requests
+from progressbar import DataTransferBar
+from requests_download import download, ProgressTracker
 import rpm
 
 __version__ = "1.1.0"
@@ -195,9 +196,9 @@ def get_file(url: str, path: str, force: bool) -> bool:
             print("File '{}' already present.".format(path))
             return False
 
-    response = requests.get(url)
-    with open(path, "wb") as file:
-        file.write(response.content)
+    progress = ProgressTracker(DataTransferBar())
+    download(url, path, trackers=(progress,))
+
     return True
 
 
