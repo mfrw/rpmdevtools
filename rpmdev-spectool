@@ -278,6 +278,7 @@ class Spec:
             if not dry:
                 try:
                     print("Downloading: {}".format(value))
+                    os.makedirs(directory, exist_ok=True)
                     really = get_file(value, os.path.join(directory, basename), force)
                     if really:
                         print("Downloaded: {}".format(basename))
@@ -391,13 +392,7 @@ def main() -> int:
         if args["directory"]:
             directory = args["directory"]
         elif args["sourcedir"]:
-            ret = subprocess.run(
-                ["rpm", "--eval", "%{_sourcedir}"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-            )
-            ret.check_returncode()
-            directory = ret.stdout.decode().strip()
+            directory = rpm.expandMacro("%{_sourcedir}")
         else:
             directory = os.getcwd()
 
