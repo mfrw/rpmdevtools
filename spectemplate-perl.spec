@@ -3,11 +3,9 @@ Version:
 Release:        1%{?dist}
 Summary:        
 
-Group:          Development/Libraries
 License:        
 URL:            
 Source0:        
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      
 BuildRequires:  perl
@@ -45,10 +43,6 @@ find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null ';'
 
 %check
 make test
-
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 
 %files

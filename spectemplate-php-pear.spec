@@ -6,11 +6,9 @@ Version:
 Release:        1%{?dist}
 Summary:        
 
-Group:          
 License:        
 URL:            http://pear.php.net/package/%{pear_name}
 Source0:        http://pear.php.net/get/%{pear_name}-%{version}.tgz
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 BuildRequires:  php-pear >= 1:1.4.9-1.2
@@ -49,10 +47,6 @@ rm -rf $RPM_BUILD_ROOT%{pear_phpdir}/.??*
 # Install XML package description
 mkdir -p $RPM_BUILD_ROOT%{pear_xmldir}
 install -pm 644 %{pear_name}.xml $RPM_BUILD_ROOT%{pear_xmldir}
-
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 
 %post

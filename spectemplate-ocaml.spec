@@ -10,11 +10,9 @@ Version:
 Release:        1%{?dist}
 Summary:        
 
-Group:          Development/Libraries
 License:        
 URL:            
 Source0:        
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  ocaml >= 3.10.0
 BuildRequires:  ocaml-findlib-devel
@@ -56,10 +54,6 @@ make install
 
 strip $OCAMLFIND_DESTDIR/stublibs/dll*.so
 chrpath --delete $OCAMLFIND_DESTDIR/stublibs/dll*.so
-
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 
 %files

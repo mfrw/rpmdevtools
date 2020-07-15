@@ -6,12 +6,9 @@ Version:
 Release:        1%{?dist}
 Summary:        
 
-Group:          Development/Languages
-
 License:        
 URL:            
 Source0:        
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      
 BuildRequires:  ruby ruby-devel
@@ -38,10 +35,6 @@ rm -rf $RPM_BUILD_ROOT
 
  
 %check
-
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 
 %files

@@ -9,11 +9,9 @@ Version:
 Release:        1%{?dist}
 Summary:        
 
-Group:          Applications/Engineering
 License:        
 URL:            http://cran.r-project.org/web/packages/%{packname}/
 Source0:        ftp://cran.r-project.org/pub/R/contrib/main/%{packname}_%{version}-%{packrel}.tar.gz
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      
 BuildRequires:  R-devel
@@ -43,10 +41,6 @@ rm -f $RPM_BUILD_ROOT%{rlibdir}/R.css
 
 %check
 %{_bindir}/R CMD check %{packname}
-
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 
 %files
