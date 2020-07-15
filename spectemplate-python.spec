@@ -1,11 +1,14 @@
+%{?!python3_pkgversion:%global python3_pkgversion 3}
+
 %global %pypi_name ...
+
 Name:           python-%{pypi_name}
 Version:        
 Release:        1%{?dist}
 Summary:        
 License:        
 URL:            
-Source0:        %{pypi_source}
+Source0:        
 
 BuildArch:      
 
@@ -22,7 +25,7 @@ BuildRequires:  python%{python3_pkgversion}-setuptools
 Summary:        %{summary}
 %{?python_provide:%python_provide python3-%{pypi_name}}
 
-%if %{defined epel}
+%if %{defined python_enable_dependency_generator} || %{defined python_disable_dependency_generator}
 # Put manual requires here:
 Requires:       python%{python3_pkgversion}-foo
 %endif
@@ -40,6 +43,7 @@ Requires:       python%{python3_pkgversion}-foo
 
 
 %install
+rm -rf $RPM_BUILD_ROOT
 %py3_install
 
 
@@ -52,6 +56,7 @@ Requires:       python%{python3_pkgversion}-foo
 
 
 %files -n  python%{python3_pkgversion}-%{pypi_name}
+%{!?_licensedir:%global license %%doc}
 %license add-license-file-here
 %doc add-docs-here
 # For noarch packages: sitelib
