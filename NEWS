@@ -1,8 +1,31 @@
-rpmdevtools x.xx (201x-xx-xx)
+rpmdevtools x.xx (202x-xx-xx)
+
+  Neal Gompa:
+  - Replace spectool with rpmdev-spectool written by Fabio Valentini
+  - Drop Group and BuildRoot tags and %clean section for spectemplates
+  - Fix for non-Fedora for Python spectemplate
+
+  Michal Domonkos:
+  - Port to <str> return values from RPM. (#1851499)
+
+  Dridi Boukelmoune:
+  - Add rpm -a support to rpmls
+
+  Josh Stone:
+  - Limit newVersion's re.sub to a single replacement
+
+  Miro Hrončok:
+  - Make the python template relevant again
+  - Don't say "downloaded" when we actually haven't for spectool
+
+  Robert-André Mauchin:
+  - Use new-style date in changelog (with TZ) for bumpspec
 
   Ville Skyttä:
   - Python 3.6 invalid escape sequence deprecation fixes
+  - Avoid python 3.6 regex related deprecations
   - Remove internal protocol retrievability check in spectool (#1472006)
+  - Recognize application/gzip as gzipped
 
 rpmdevtools 8.10 (2017-01-14)
 
