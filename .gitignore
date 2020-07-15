@@ -18,5 +18,4 @@ rpmdev-packager.1
 rpmdev-rmdevelrpms
 rpmdev-rmdevelrpms.8
 rpmdevtools.bash-completion
-spectool
-spectool.1
+rpmdev-spectool.1
