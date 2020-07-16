@@ -25,7 +25,7 @@ BuildRequires:  python%{python3_pkgversion}-setuptools
 Summary:        %{summary}
 %{?python_provide:%python_provide python3-%{pypi_name}}
 
-%if %{defined python_enable_dependency_generator} || %{defined python_disable_dependency_generator}
+%if %{undefined python_enable_dependency_generator} && %{undefined python_disable_dependency_generator}
 # Put manual requires here:
 Requires:       python%{python3_pkgversion}-foo
 %endif
