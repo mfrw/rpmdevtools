@@ -22,7 +22,6 @@
 
 import argparse
 import os
-import subprocess
 import tempfile
 from collections import OrderedDict
 from urllib.parse import urlparse
@@ -276,15 +275,27 @@ class Spec:
 
         if parsed.scheme:
             if not dry:
+                path = os.path.join(directory, basename)
+
                 try:
                     print("Downloading: {}".format(value))
                     os.makedirs(directory, exist_ok=True)
-                    really = get_file(value, os.path.join(directory, basename), force)
+                    really = get_file(value, path, force)
                     if really:
                         print("Downloaded: {}".format(basename))
+
                 except IOError as e:
                     print("Download failed:")
                     print(e)
+
+                except KeyboardInterrupt:
+                    if os.path.isfile(path):
+                        print("Download cancelled, removing partially downloaded file.")
+                        os.remove(path)
+                    else:
+                        print("Download cancelled.")
+                    raise
+
             else:
                 print("Would have downloaded: {}".format(value))
 
@@ -426,4 +437,7 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    exit(main())
+    try:
+        exit(main())
+    except KeyboardInterrupt:
+        exit(0)
