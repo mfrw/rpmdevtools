@@ -154,7 +154,7 @@ class SpecFile(object):
                     evrstring = ' - %s' % evr
                 else:
                     evrstring = ''
-                date = time.strftime("%a %b %d %T %Z %Y", time.gmtime())
+                date = time.strftime("%a %b %e %T %Z %Y", time.localtime())
                 newchangelogentry = "* %s %s%s\n%s\n\n" % \
                     (date, email, evrstring, entry)
                 self.lines[i] += newchangelogentry
