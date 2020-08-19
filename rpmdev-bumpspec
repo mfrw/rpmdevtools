@@ -154,7 +154,10 @@ class SpecFile(object):
                     evrstring = ' - %s' % evr
                 else:
                     evrstring = ''
-                date = time.strftime("%a %b %e %T %Z %Y", time.localtime())
+                if opts.legacy_datestamp:
+                    date = time.strftime("%a %b %e %Y", time.gmtime())
+                else:
+                    date = time.strftime("%a %b %e %T %Z %Y", time.localtime())
                 newchangelogentry = "* %s %s%s\n%s\n\n" % \
                     (date, email, evrstring, entry)
                 self.lines[i] += newchangelogentry
@@ -285,6 +288,8 @@ the Free Software Foundation; either version 2 of the License, or
     parser.add_option("-n", "--new",
                       help="set new version and reset/set release "
                       "(simple spec files only)")
+    parser.add_option("-D", "--legacy-datestamp", default=False, action='store_true',
+                      help="use legacy datestamp for changelog entries")
     parser.add_option("-V", "--verbose", default=False, action='store_true',
                       help="more output")
     parser.add_option("-v", "--version", default=False, action='store_true',

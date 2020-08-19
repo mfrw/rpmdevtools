@@ -293,7 +293,11 @@ cat "$tempspec" | sed -rne "
 $ {
     g
     s/^(Name:[ \\t]*)[^\\n]*/\\1$appname/IMg
-    s|^%changelog\\s*|%changelog\\n* $(LC_ALL=C date +'%a %b %e %T %Z %Y') $(rpmdev-packager)\\n- |Mg
+    if [[ $rpmver -ge 41400 ]] ; then # >= 4.14 (RHEL >= 8, Fedora >= 27)
+        s|^%changelog\\s*|%changelog\\n* $(LC_ALL=C date +'%a %b %e %T %Z %Y') $(rpmdev-packager)\\n- |Mg
+    else
+        s|^%changelog\\s*|%changelog\\n* $(LC_ALL=C date --utc +'%a %b %e %Y') $(rpmdev-packager)\\n- |Mg
+    fi
     $specfilter
     p
 }" > "$specfile"
