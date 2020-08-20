@@ -1,4 +1,4 @@
-rpmdevtools x.xx (202x-xx-xx)
+rpmdevtools 9.1 (2020-08-20)
 
   Neal Gompa:
   - Add ability to use legacy datestamp when desirable in rpmdev-bumpspec and rpmdev-newspec
