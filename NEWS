@@ -1,3 +1,13 @@
+rpmdevtools x.xx (202x-xx-xx)
+
+  Neal Gompa:
+  - Add ability to use legacy datestamp when desirable in rpmdev-bumpspec and rpmdev-newspec
+  - Use full timestamps consistently in rpmdev-bumpspec and rpmdev-newspec
+  - Fix conditional for manual requires in the Python spectemplate
+
+  Fabio Valentini:
+  - handle Ctrl-C / KeyboardInterrupt gracefully in rpmdev-spectool
+
 rpmdevtools 9.0 (2020-07-14)
 
   Neal Gompa:
