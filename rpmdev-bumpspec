@@ -147,6 +147,16 @@ class SpecFile(object):
 
     _changelog_pattern = re.compile(r"^%changelog(\s|$)", re.I)
 
+    def validateDatestamp(self, datestamp):
+        try:
+            time.strptime(datestamp, "%a %b %d %H:%M:%S %Z %Y")
+        except ValueError:
+            try:
+                time.strptime(datestamp, "%a %b %d %Y")
+            except ValueError:
+                raise BumpSpecError('Bad datestamp: %s\n' % datestamp)
+        return datestamp
+
     def addChangelogEntry(self, evr, entry, email):
         for i in range(len(self.lines)):
             if SpecFile._changelog_pattern.match(self.lines[i]):
@@ -155,7 +165,7 @@ class SpecFile(object):
                 else:
                     evrstring = ''
                 if opts.datestamp:
-                    date = opts.datestamp
+                    date = self.validateDatestamp(opts.datestamp)
                 elif opts.legacy_datestamp:
                     date = time.strftime("%a %b %e %Y", time.gmtime())
                 else:
