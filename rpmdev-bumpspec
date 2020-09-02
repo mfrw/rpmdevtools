@@ -154,7 +154,9 @@ class SpecFile(object):
                     evrstring = ' - %s' % evr
                 else:
                     evrstring = ''
-                if opts.legacy_datestamp:
+                if opts.datestamp:
+                    date = opts.datestamp
+                elif opts.legacy_datestamp:
                     date = time.strftime("%a %b %e %Y", time.gmtime())
                 else:
                     date = time.strftime("%a %b %e %T %Z %Y", time.localtime())
@@ -290,6 +292,8 @@ the Free Software Foundation; either version 2 of the License, or
                       "(simple spec files only)")
     parser.add_option("-D", "--legacy-datestamp", default=False, action='store_true',
                       help="use legacy datestamp for changelog entries")
+    parser.add_option("-d", "--datestamp",
+                      help="changelog date string (default: today)")
     parser.add_option("-V", "--verbose", default=False, action='store_true',
                       help="more output")
     parser.add_option("-v", "--version", default=False, action='store_true',
