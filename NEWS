@@ -1,4 +1,4 @@
-rpmdevtools x.xx (202x-xx-xx)
+rpmdevtools 9.2 (2020-10-05)
 
   Neal Gompa:
   - Fix setup of changelog in rpmdev-newspec

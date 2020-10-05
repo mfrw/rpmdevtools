@@ -1,4 +1,4 @@
-AC_INIT(rpmdevtools, 9.1)
+AC_INIT(rpmdevtools, 9.2)
 AM_INIT_AUTOMAKE([foreign 1.11 dist-xz no-dist-gzip
                           -Wall -Wno-portability -Werror])
 
