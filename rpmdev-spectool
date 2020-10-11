@@ -23,6 +23,7 @@
 import argparse
 import os
 import tempfile
+import time
 from collections import OrderedDict
 from urllib.parse import urlparse
 
@@ -205,6 +206,10 @@ class Spec:
     def __init__(self, path: str):
         self.path = path
         self.spec = rpm.spec(self.path)
+
+        # workaround for RHBZ#1881917 to fix odd download ETAs:
+        # RPM does not properly restore the timezone after parsing a changelog date
+        time.tzset()
 
         self.files = list(self.spec.sources)
         self.files.sort(key=(lambda file: file[1]))
