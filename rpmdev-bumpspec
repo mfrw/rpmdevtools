@@ -167,7 +167,7 @@ class SpecFile(object):
                 if opts.datestamp:
                     date = self.validateDatestamp(opts.datestamp)
                 elif opts.legacy_datestamp:
-                    date = time.strftime("%a %b %e %Y", time.gmtime())
+                    date = time.strftime("%a %b %d %Y", time.gmtime())
                 else:
                     date = time.strftime("%a %b %e %T %Z %Y", time.localtime())
                 newchangelogentry = "* %s %s%s\n%s\n\n" % \
