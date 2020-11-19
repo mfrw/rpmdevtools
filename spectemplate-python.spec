@@ -1,8 +1,8 @@
 %{?!python3_pkgversion:%global python3_pkgversion 3}
 
-%global %pypi_name ...
+%global srcname ...
 
-Name:           python-%{pypi_name}
+Name:           python-%{srcname}
 Version:        
 Release:        1%{?dist}
 Summary:        
@@ -21,21 +21,21 @@ BuildRequires:  python%{python3_pkgversion}-setuptools
 ...
 
 
-%package -n python%{python3_pkgversion}-%{pypi_name}
+%package -n python%{python3_pkgversion}-%{srcname}
 Summary:        %{summary}
-%{?python_provide:%python_provide python3-%{pypi_name}}
+%{?python_provide:%python_provide python3-%{srcname}}
 
 %if %{undefined python_enable_dependency_generator} && %{undefined python_disable_dependency_generator}
 # Put manual requires here:
 Requires:       python%{python3_pkgversion}-foo
 %endif
 
-%description -n python%{python3_pkgversion}-%{pypi_name}
+%description -n python%{python3_pkgversion}-%{srcname}
 ...
 
 
 %prep
-%autosetup -p1
+%autosetup -p1 -n %{srcname}-%{version}
 
 
 %build
@@ -55,16 +55,16 @@ rm -rf $RPM_BUILD_ROOT
 ...
 
 
-%files -n  python%{python3_pkgversion}-%{pypi_name}
+%files -n  python%{python3_pkgversion}-%{srcname}
 %{!?_licensedir:%global license %%doc}
 %license add-license-file-here
 %doc add-docs-here
 # For noarch packages: sitelib
-%{python3_sitelib}/%{pypi_name}/
-%{python3_sitelib}/%{pypi_name}-%{version}-py%{python3_version}.egg-info/
+%{python3_sitelib}/%{srcname}/
+%{python3_sitelib}/%{srcname}-%{version}-py%{python3_version}.egg-info/
 # For arch-specific packages: sitearch
-%{python3_sitearch}/%{pypi_name}/
-%{python3_sitelib}/%{pypi_name}-%{version}-py%{python3_version}.egg-info/
+%{python3_sitearch}/%{srcname}/
+%{python3_sitelib}/%{srcname}-%{version}-py%{python3_version}.egg-info/
 
 
 %changelog
