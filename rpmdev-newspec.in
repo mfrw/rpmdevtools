@@ -288,9 +288,9 @@ if [[ $NEWSPEC_PREFER_MACROS ]] ; then
 fi
 
 if [[ $rpmver -ge 41400 ]] ; then # >= 4.14 (RHEL >= 8, Fedora >= 27)
-    chlog="s|^%changelog\\s*|%changelog\\n* $(LC_ALL=C date +'%a %b %e %T %Z %Y') $(rpmdev-packager)\\n- |Mg"
+    chlog="s|^%changelog\\s*|%changelog\\n* $(LC_ALL=C date +'%a %b %d %T %Z %Y') $(rpmdev-packager)\\n- |Mg"
 else
-    chlog="s|^%changelog\\s*|%changelog\\n* $(LC_ALL=C date --utc +'%a %b %e %Y') $(rpmdev-packager)\\n- |Mg"
+    chlog="s|^%changelog\\s*|%changelog\\n* $(LC_ALL=C date --utc +'%a %b %d %Y') $(rpmdev-packager)\\n- |Mg"
 fi
 
 cat "$tempspec" | sed -rne "
