@@ -25,10 +25,11 @@ import os
 import tempfile
 import time
 from collections import OrderedDict
+from typing import Optional
 from urllib.parse import urlparse
 
-from progressbar import DataTransferBar
-from requests_download import download, ProgressTracker
+import progressbar
+import requests
 import rpm
 
 __version__ = "1.1.0"
@@ -58,7 +59,8 @@ def get_args() -> dict:
         argcomplete = None
 
     parser = argparse.ArgumentParser(
-        description=HELP_TEXT, formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=HELP_TEXT,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
     ops = parser.add_argument_group("Operating mode")
@@ -103,19 +105,35 @@ def get_args() -> dict:
     )
 
     files.add_argument(
-        "--sources", "-S", action="store_const", const=True, default=False, help="all sources",
+        "--sources",
+        "-S",
+        action="store_const",
+        const=True,
+        default=False,
+        help="all sources",
     )
 
     files.add_argument(
-        "--patches", "-P", action="store_const", const=True, default=False, help="all patches",
+        "--patches",
+        "-P",
+        action="store_const",
+        const=True,
+        default=False,
+        help="all patches",
     )
 
     files.add_argument(
-        "--source", "-s", action="store", help="specified sources",
+        "--source",
+        "-s",
+        action="store",
+        help="specified sources",
     )
 
     files.add_argument(
-        "--patch", "-p", action="store", help="specified patches",
+        "--patch",
+        "-p",
+        action="store",
+        help="specified patches",
     )
 
     misc = parser.add_argument_group("Miscellaneous")
@@ -188,6 +206,60 @@ def split_numbers(args: str) -> list:
     return args.split(",")
 
 
+# simple streamed file download progress tracker inspired by requests_download
+class ProgressTracker:
+    def __init__(self, progress_bar: progressbar.ProgressBar):
+        self.progress_bar = progress_bar
+        self.received = 0
+
+    def on_start(self, response: requests.Response):
+        max_value = None
+
+        if "content-length" in response.headers:
+            max_value = int(response.headers["content-length"])
+
+        self.progress_bar.start(max_value=max_value)
+        self.received = 0
+
+    def on_chunk(self, chunk: bytes):
+        self.received += len(chunk)
+
+        try:
+            self.progress_bar.update(self.received)
+        except ValueError:
+            pass
+
+    def on_finish(self):
+        self.progress_bar.finish()
+
+
+# simple streamed file download implementation inspired by requests_download
+def download(url, target, headers=None, tracker: Optional[ProgressTracker] = None):
+    if headers is None:
+        headers = {}
+
+    headers.setdefault("User-Agent", "rpmdev-spectool")
+
+    ret = requests.get(url, headers=headers, stream=True)
+    ret.raise_for_status()
+
+    if tracker:
+        tracker.on_start(ret)
+
+    with open(target, "wb") as file:
+        # decode_content=False: workaround for some servers that claim to return
+        # gzip-compressed data when serving .tar.gz files
+        for chunk in ret.raw.stream(8192, decode_content=False):
+            if chunk:
+                file.write(chunk)
+
+                if tracker:
+                    tracker.on_chunk(chunk)
+
+    if tracker:
+        tracker.on_finish()
+
+
 def get_file(url: str, path: str, force: bool) -> bool:
     if os.path.exists(path):
         if force:
@@ -196,8 +268,8 @@ def get_file(url: str, path: str, force: bool) -> bool:
             print("File '{}' already present.".format(path))
             return False
 
-    progress = ProgressTracker(DataTransferBar())
-    download(url, path, trackers=(progress,))
+    progress = ProgressTracker(progressbar.DataTransferBar())
+    download(url, path, tracker=progress)
 
     return True
 
