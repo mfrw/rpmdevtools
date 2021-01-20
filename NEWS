@@ -1,4 +1,4 @@
-rpmdevtools x.xx (202x-xx-xx)
+rpmdevtools 9.3 (2021-01-20)
 
   Fabio Valentini:
   - spectool: add workaround for RHBZ#1881917
