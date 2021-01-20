@@ -83,6 +83,9 @@ Options:
 $types}
   -m, --macros   Emit templates using macros instead of shell style variables.
                  Configuration variable: NEWSPEC_PREFER_MACROS, default is off.
+  -D, --legacy-datestamp
+                 Use use legacy datestamp for changelog entries.
+                 Configuration variable: NEWSPEC_LEGACY_DATESTAMP, default is off.
   -r VERSION, --rpm-version VERSION
                  Filter out some spec file constructs not needed by the
                  specified rpm(build) version and newer ones. Configuration
@@ -119,6 +122,9 @@ while [[ $1 ]] ; do
             ;;
         -m|--macros)
             NEWSPEC_PREFER_MACROS=1
+            ;;
+        -D|--legacy-datstamp)
+            NEWSPEC_LEGACY_DATESTAMP=1
             ;;
         -r|--rpm-version)
             shift
@@ -287,7 +293,7 @@ if [[ $NEWSPEC_PREFER_MACROS ]] ; then
 "
 fi
 
-if [[ $rpmver -ge 41400 ]] ; then # >= 4.14 (RHEL >= 8, Fedora >= 27)
+if [[ $rpmver -ge 41400 ]] && [[ -z $NEWSPEC_LEGACY_DATESTAMP ]] ; then # >= 4.14 (RHEL >= 8, Fedora >= 27)
     chlog="s|^%changelog\\s*|%changelog\\n* $(LC_ALL=C date +'%a %b %d %T %Z %Y') $(rpmdev-packager)\\n- |Mg"
 else
     chlog="s|^%changelog\\s*|%changelog\\n* $(LC_ALL=C date --utc +'%a %b %d %Y') $(rpmdev-packager)\\n- |Mg"
