@@ -1,3 +1,20 @@
+rpmdevtools x.xx (202x-xx-xx)
+
+  Fabio Valentini:
+  - spectool: add workaround for RHBZ#1881917
+  - spectool: use our own streamed file download implementation
+
+  Michel Alexandre Salim:
+  - Conditionally use ldconfig scriptlets from the library template
+  - Python template: Fix PyPI name declaration
+
+  Miro Hrončok:
+  - bumpspec: Add zero-padding to day of the month with legacy datestamp
+
+  Neal Gompa:
+  - newspec: Use zero-padded day number for consistency with bumpspec
+  - newspec: Add option to force legacy datestamp
+
 rpmdevtools 9.2 (2020-10-05)
 
   Neal Gompa:
