@@ -239,6 +239,9 @@ def download(url, target, headers=None, tracker: Optional[ProgressTracker] = Non
         headers = {}
 
     headers.setdefault("User-Agent", "rpmdev-spectool")
+    # identity should prevent servers from sending gzip-compressed text
+    # which would later not be decompressed because we set decode_content=False
+    headers.setdefault("Accept-Encoding", "identity")
 
     ret = requests.get(url, headers=headers, stream=True)
     ret.raise_for_status()
