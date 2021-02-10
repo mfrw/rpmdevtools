@@ -403,7 +403,7 @@ class Spec:
 def main() -> int:
     args = get_args()
 
-    if args["all"]:
+    if args["all"] and not args["sources"] and not args["patches"]:
         args["sources"] = True
         args["patches"] = True
 
