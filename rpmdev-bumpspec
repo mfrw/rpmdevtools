@@ -25,6 +25,10 @@ import sys
 import textwrap
 import time
 
+try:
+    from rpmautospec import specfile_uses_rpmautospec
+except ImportError:
+    pass
 
 __version__ = "1.0.13"
 
@@ -156,6 +160,15 @@ class SpecFile(object):
             except ValueError:
                 raise BumpSpecError('Bad datestamp: %s\n' % datestamp)
         return datestamp
+
+
+    def checkChangelogPresence(self):
+        detected = False
+        for i in range(len(self.lines)):
+            if SpecFile._changelog_pattern.match(self.lines[i]):
+                detected = True
+                break
+        return detected
 
     def addChangelogEntry(self, evr, entry, email):
         for i in range(len(self.lines)):
@@ -355,6 +368,18 @@ the Free Software Foundation; either version 2 of the License, or
         except Exception as e:
             # Not actually a parser error, but... meh.
             parser.error(e)
+
+        try:
+            if specfile_uses_rpmautospec(
+                specfile=s.filename,
+                check_autorelease=True,
+                check_autochangelog=False
+            ):
+                print("RPMAutoSpec usage detected, not changing the spec file.")
+                continue
+        except NameError:
+            pass
+
         if opts.new:
             changed = s.newVersion(opts.new)
         else:
@@ -367,6 +392,9 @@ the Free Software Foundation; either version 2 of the License, or
             continue
 
         s.writeFile(aspec)
+        if not s.checkChangelogPresence():
+            print("No %changelog detected, not generating one.")
+            continue
 
         # Get EVR for changelog entry.
         cmd = ("rpm", "-q", "--specfile", "--define", "dist %{nil}",
