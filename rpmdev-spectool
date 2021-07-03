@@ -439,11 +439,20 @@ def main() -> int:
 
         temp.close()
 
-        spec = Spec(temp.name)
-        os.remove(temp.name)
+        try:
+            spec = Spec(temp.name)
+        except ValueError:
+            print("RPM Failed to parse spec file.")
+            return 1
+        finally:
+            os.remove(temp.name)
 
     else:
-        spec = Spec(path)
+        try:
+            spec = Spec(path)
+        except ValueError:
+            print("RPM Failed to parse spec file.")
+            return 1
 
     if args["list_files"] and not args["get_files"]:
         if args["source"]:
