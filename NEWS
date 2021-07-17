@@ -1,4 +1,4 @@
-rpmdevtools 9.x (2021-07-xx)
+rpmdevtools 9.5 (2021-07-17)
 
   Neal Gompa:
   - bumpspec: Use the correct parameter name for specfile_uses_rpmautospec()
