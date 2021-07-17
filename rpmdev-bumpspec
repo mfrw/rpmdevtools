@@ -371,7 +371,7 @@ the Free Software Foundation; either version 2 of the License, or
 
         try:
             if specfile_uses_rpmautospec(
-                specfile=s.filename,
+                specpath=s.filename,
                 check_autorelease=True,
                 check_autochangelog=False
             ):
