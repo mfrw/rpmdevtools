@@ -1,4 +1,4 @@
-rpmdevtools x.xx (202x-xx-xx)
+rpmdevtools 9.4 (2021-07-17)
 
   Fabio Valentini:
   - spectool: fix difference between --all, --sources, and --patches
