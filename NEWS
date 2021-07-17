@@ -1,3 +1,15 @@
+rpmdevtools x.xx (202x-xx-xx)
+
+  Fabio Valentini:
+  - spectool: fix difference between --all, --sources, and --patches
+  - spectool: catch ValueError thrown by RPM for invalid .spec files
+
+  Miro Hrončok:
+  - Use Accept-Encoding: identity together with decode_content=False
+
+  Stephen Coady:
+  - make rpmdev-bumpsec take rpmautospec into account
+
 rpmdevtools 9.3 (2021-01-20)
 
   Fabio Valentini:
