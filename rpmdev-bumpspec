@@ -28,7 +28,7 @@ import time
 try:
     from rpmautospec import specfile_uses_rpmautospec
 except ImportError:
-    pass
+    specfile_uses_rpmautospec = None
 
 __version__ = "1.0.13"
 
@@ -113,14 +113,23 @@ class SpecFile(object):
 
         if bumped:
             return
-        if self.verbose:
-            sys.stderr.write('ERROR: No release value matched: %s\n' %
-                             self.filename)
-        sys.exit(1)
 
-    def newVersion(self, vr):
+        raise BumpSpecError('ERROR: No release value matched: %s\n' %
+                            self.filename)
+
+    def newVersion(self, vr, set_release):
         """
         Update version and release fields.
+
+        If the vr argument contains a hyphen, it is split into
+        separate Version-Release parts. Otherwise, Release is reset
+        to 1%{?dist}.
+
+        If set_release is False, only the Version value will be set
+        to the new version string, and the Release value will not be
+        changed, whether vr contained a custom Release value or not.
+
+        Note: This code path does not support the %baserelease macro.
 
         Returns True if the values changed.  False if they did not.
         """
@@ -140,7 +149,7 @@ class SpecFile(object):
                 self.lines[i] = re.sub(
                     r'[^: \t]*$', v, self.lines[i].rstrip(), count=1) + '\n'
                 changed = changed or self.lines[i] != original
-            elif self.lines[i].lower().startswith('release:'):
+            elif self.lines[i].lower().startswith('release:') and set_release:
                 # split and reconstruct to preserve whitespace
                 split = re.split(r':', self.lines[i].rstrip())
                 self.lines[i] = split[0] + ':' + \
@@ -161,7 +170,6 @@ class SpecFile(object):
                 raise BumpSpecError('Bad datestamp: %s\n' % datestamp)
         return datestamp
 
-
     def checkChangelogPresence(self):
         detected = False
         for i in range(len(self.lines)):
@@ -170,16 +178,16 @@ class SpecFile(object):
                 break
         return detected
 
-    def addChangelogEntry(self, evr, entry, email):
+    def addChangelogEntry(self, evr, entry, email, datestamp, legacy_datestamp):
         for i in range(len(self.lines)):
             if SpecFile._changelog_pattern.match(self.lines[i]):
                 if len(evr):
                     evrstring = ' - %s' % evr
                 else:
                     evrstring = ''
-                if opts.datestamp:
-                    date = self.validateDatestamp(opts.datestamp)
-                elif opts.legacy_datestamp:
+                if datestamp:
+                    date = self.validateDatestamp(datestamp)
+                elif legacy_datestamp:
                     date = time.strftime("%a %b %d %Y", time.gmtime())
                 else:
                     date = time.strftime("%a %b %e %T %Z %Y", time.localtime())
@@ -276,7 +284,8 @@ class SpecFile(object):
     def debugdiff(self, old, new):
         print('%s\n-%s\n+%s\n' % (self.filename, old, new))
 
-if __name__ == "__main__":
+
+def main():
     usage = '''Usage: %prog [OPTION]... SPECFILE...
 
 rpmdev-bumpspec bumps release tags in specfiles.'''
@@ -325,7 +334,7 @@ the Free Software Foundation; either version 2 of the License, or
 
     if opts.version:
         print(version)
-        sys.exit(0)
+        return 0
 
     if not args:
         parser.error('No specfiles specified')
@@ -369,29 +378,43 @@ the Free Software Foundation; either version 2 of the License, or
             # Not actually a parser error, but... meh.
             parser.error(e)
 
-        try:
-            if specfile_uses_rpmautospec(
+        uses_rpmautospec = False
+        if specfile_uses_rpmautospec:
+            uses_rpmautospec = specfile_uses_rpmautospec(
                 specpath=s.filename,
                 check_autorelease=True,
                 check_autochangelog=False
-            ):
+            )
+
+        if uses_rpmautospec:
+            if opts.new:
+                print("RPMAutoSpec usage detected, only setting Version.")
+                changed = s.newVersion(opts.new, set_release=False)
+            else:
                 print("RPMAutoSpec usage detected, not changing the spec file.")
                 continue
-        except NameError:
-            pass
-
-        if opts.new:
-            changed = s.newVersion(opts.new)
         else:
-            s.bumpRelease()
-            changed = True
+            if opts.new:
+                changed = s.newVersion(opts.new, set_release=True)
+            else:
+                try:
+                    s.bumpRelease()
+                except BumpSpecError as e:
+                    print(e)
+                    return 1
+
+                changed = True
 
         # If we didn't change anything, no need to write and modify the
         # changelog.
-        if not changed:
+        if changed:
+            s.writeFile(aspec)
+        else:
             continue
 
-        s.writeFile(aspec)
+        if uses_rpmautospec:
+            continue
+
         if not s.checkChangelogPresence():
             print("No %changelog detected, not generating one.")
             continue
@@ -404,7 +427,11 @@ the Free Software Foundation; either version 2 of the License, or
         if sys.version_info[0] > 2:
             evr = evr.decode(errors='replace')
 
-        s.addChangelogEntry(evr, opts.comment, opts.userstring)
+        s.addChangelogEntry(evr, opts.comment, opts.userstring, opts.datestamp, opts.legacy_datestamp)
         s.writeFile(aspec)
 
-sys.exit(0)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
