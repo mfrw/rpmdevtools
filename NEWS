@@ -1,4 +1,4 @@
-rpmdevtools 9.6 (202x-xx-xx)
+rpmdevtools 9.6 (2022-02-04)
 
   Fabio Valentini:
   - bumpspec: fix --new flag when using rpmautospec
