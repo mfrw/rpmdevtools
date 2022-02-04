@@ -1,3 +1,11 @@
+rpmdevtools 9.6 (202x-xx-xx)
+
+  Fabio Valentini:
+  - bumpspec: fix --new flag when using rpmautospec
+
+  Michel Alexandre Salim:
+  - Skip cleaning build root in %install
+
 rpmdevtools 9.5 (2021-07-17)
 
   Neal Gompa:
