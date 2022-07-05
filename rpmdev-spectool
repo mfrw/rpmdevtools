@@ -367,6 +367,7 @@ class Spec:
                 except IOError as e:
                     print("Download failed:")
                     print(e)
+                    raise e
 
                 except KeyboardInterrupt:
                     if os.path.isfile(path):
@@ -383,21 +384,41 @@ class Spec:
         if not value:
             value = self.sources[number]
 
-        self._get_file(value, directory, force, dry)
+        try:
+            self._get_file(value, directory, force, dry)
+            return True
+
+        except IOError:
+            return False
 
     def get_patch(self, number: int, directory: str, force: bool, dry: bool, value: str = None):
         if not value:
             value = self.patches[number]
 
-        self._get_file(value, directory, force, dry)
+        try:
+            self._get_file(value, directory, force, dry)
+            return True
+
+        except IOError:
+            return False
 
     def get_sources(self, directory: str, force: bool, dry: bool):
+        failure = False
+
         for number, value in self.sources.items():
-            self.get_source(number, directory, force, dry, value)
+            if self.get_source(number, directory, force, dry, value):
+                failure = True
+
+        return failure
 
     def get_patches(self, directory: str, force: bool, dry: bool):
+        failure = False
+
         for number, value in self.patches.items():
-            self.get_patch(number, directory, force, dry, value)
+            if self.get_patch(number, directory, force, dry, value):
+                failure = True
+
+        return failure
 
 
 def main() -> int:
@@ -496,6 +517,8 @@ def main() -> int:
         else:
             directory = os.getcwd()
 
+        tasks = []
+
         if args["source"]:
             numbers = split_numbers(args["source"])
 
@@ -504,10 +527,10 @@ def main() -> int:
                     print("No patch with number '{}' found.".format(number))
                     continue
 
-                spec.get_source(number, directory, force, dry)
+                tasks.append((spec.get_source, (number, directory, force, dry)))
 
         elif args["sources"] and not args["patch"]:
-            spec.get_sources(directory, force, dry)
+            tasks.append((spec.get_sources, (directory, force, dry)))
 
         if args["patch"]:
             numbers = split_numbers(args["patch"])
@@ -517,10 +540,21 @@ def main() -> int:
                     print("No patch with number '{}' found.".format(number))
                     continue
 
-                spec.get_patch(number, directory, force, dry)
+                tasks.append((spec.get_patch, (number, directory, force, dry)))
 
         elif args["patches"] and not args["source"]:
-            spec.get_patches(directory, force, dry)
+            tasks.append((spec.get_patches, (directory, force, dry)))
+
+        failure = False
+
+        for task, args in tasks:
+            fail = task(*args)
+
+            if fail:
+                failure = True
+
+        if failure:
+            return 1
 
     return 0
 
