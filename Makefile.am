@@ -15,7 +15,7 @@ man8_MANS = rpmdev-rmdevelrpms.8
 dist_pkgsysconf_DATA = curlrc newspec.conf rmdevelrpms.conf \
 	spectemplate-lib.spec spectemplate-minimal.spec \
 	spectemplate-perl.spec spectemplate-php-pear.spec \
-	spectemplate-python.spec spectemplate-ruby.spec \
+	spectemplate-python.spec spectemplate-pyproject.spec spectemplate-ruby.spec \
 	spectemplate-ocaml.spec spectemplate-R.spec spectemplate-dummy.spec \
 	template.init
 
