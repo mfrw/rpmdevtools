@@ -25,7 +25,9 @@ import os
 import tempfile
 import time
 from collections import OrderedDict
-from typing import Optional
+from typing import Any, Callable, Dict, List, Optional
+from typing import OrderedDict as OrderedDictT
+from typing import Tuple
 from urllib.parse import urlparse
 
 import progressbar
@@ -46,13 +48,13 @@ anything about missing sources or patches). The plan is to catch errors like
 this in spectool itself and warn the user about it in the future."""
 
 
-def complete_spec_paths(prefix, **kwargs):
+def complete_spec_paths(prefix, **kwargs) -> List[str]:
     import glob
 
     return glob.glob(prefix + "*.spec")
 
 
-def get_args() -> dict:
+def get_args() -> Dict[str, Any]:
     try:
         import argcomplete
     except ImportError:
@@ -202,17 +204,17 @@ def get_args() -> dict:
     return vars(parser.parse_args())
 
 
-def split_numbers(args: str) -> list:
+def split_numbers(args: str) -> List[str]:
     return args.split(",")
 
 
 # simple streamed file download progress tracker inspired by requests_download
 class ProgressTracker:
-    def __init__(self, progress_bar: progressbar.ProgressBar):
+    def __init__(self, progress_bar: progressbar.ProgressBar) -> None:
         self.progress_bar = progress_bar
         self.received = 0
 
-    def on_start(self, response: requests.Response):
+    def on_start(self, response: requests.Response) -> None:
         max_value = None
 
         if "content-length" in response.headers:
@@ -221,7 +223,7 @@ class ProgressTracker:
         self.progress_bar.start(max_value=max_value)
         self.received = 0
 
-    def on_chunk(self, chunk: bytes):
+    def on_chunk(self, chunk: bytes) -> None:
         self.received += len(chunk)
 
         try:
@@ -229,12 +231,13 @@ class ProgressTracker:
         except ValueError:
             pass
 
-    def on_finish(self):
+    def on_finish(self) -> None:
         self.progress_bar.finish()
 
 
 # simple streamed file download implementation inspired by requests_download
-def download(url, target, headers=None, tracker: Optional[ProgressTracker] = None):
+def download(url, target, headers=None,
+             tracker: Optional[ProgressTracker] = None) -> None:
     if headers is None:
         headers = {}
 
@@ -278,7 +281,7 @@ def get_file(url: str, path: str, force: bool) -> bool:
 
 
 class Spec:
-    def __init__(self, path: str):
+    def __init__(self, path: str) -> None:
         self.path = path
         self.spec = rpm.spec(self.path)
 
@@ -289,10 +292,10 @@ class Spec:
         self.files = list(self.spec.sources)
         self.files.sort(key=(lambda file: file[1]))
 
-        self._sources = None
-        self._patches = None
+        self._sources: Optional[OrderedDictT[str, str]] = None
+        self._patches: Optional[OrderedDictT[str, str]] = None
 
-    def _files(self, typ) -> OrderedDict:
+    def _files(self, typ: int) -> OrderedDictT[str, str]:
         # file is a 3-tuple of (path, number, type)
         # type 1: source file
         # type 2: patch file
@@ -305,41 +308,41 @@ class Spec:
         return files
 
     @property
-    def sources(self) -> OrderedDict:
+    def sources(self) -> OrderedDictT[str, str]:
         if not self._sources:
             self._sources = self._files(1)
 
         return self._sources
 
     @property
-    def patches(self) -> OrderedDict:
+    def patches(self) -> OrderedDictT[str, str]:
         if not self._patches:
             self._patches = self._files(2)
 
         return self._patches
 
-    def print_source(self, number: int, value: str = None):
+    def print_source(self, number: str, value: Optional[str] = None) -> None:
         if not value:
             value = self.sources[number]
 
         print("Source{}: {}".format(number, value))
 
-    def print_patch(self, number: int, value: str = None):
+    def print_patch(self, number: str, value: Optional[str] = None) -> None:
         if not value:
             value = self.patches[number]
 
         print("Patch{}: {}".format(number, value))
 
-    def list_sources(self):
+    def list_sources(self) -> None:
         for (number, value) in self.sources.items():
             self.print_source(number, value)
 
-    def list_patches(self):
+    def list_patches(self) -> None:
         for (number, value) in self.patches.items():
             self.print_patch(number, value)
 
     @staticmethod
-    def _get_file(value: str, directory: str, force: bool, dry: bool):
+    def _get_file(value: str, directory: str, force: bool, dry: bool) -> None:
         parsed = urlparse(value)
 
         if "#" not in value:
@@ -354,6 +357,9 @@ class Spec:
                 return
 
         if parsed.scheme:
+            if dry:
+                print("Would have downloaded: {}".format(value))
+                return None
             if not dry:
                 path = os.path.join(directory, basename)
 
@@ -377,10 +383,8 @@ class Spec:
                         print("Download cancelled.")
                     raise
 
-            else:
-                print("Would have downloaded: {}".format(value))
-
-    def get_source(self, number: int, directory: str, force: bool, dry: bool, value: str = None):
+    def get_source(self, number: str, directory: str, force: bool, dry: bool,
+                   value: Optional[str] = None) -> bool:
         if not value:
             value = self.sources[number]
 
@@ -391,7 +395,8 @@ class Spec:
         except IOError:
             return True
 
-    def get_patch(self, number: int, directory: str, force: bool, dry: bool, value: str = None):
+    def get_patch(self, number: str, directory: str, force: bool, dry: bool,
+                  value: Optional[str] = None) -> bool:
         if not value:
             value = self.patches[number]
 
@@ -517,14 +522,14 @@ def main() -> int:
         else:
             directory = os.getcwd()
 
-        tasks = []
+        tasks: List[Tuple[Callable[..., bool], Tuple[Any, ...]]] = []
 
         if args["source"]:
             numbers = split_numbers(args["source"])
 
             for number in numbers:
                 if number not in spec.sources.keys():
-                    print("No patch with number '{}' found.".format(number))
+                    print("No source with number '{}' found.".format(number))
                     continue
 
                 tasks.append((spec.get_source, (number, directory, force, dry)))
@@ -547,8 +552,8 @@ def main() -> int:
 
         failure = False
 
-        for task, args in tasks:
-            fail = task(*args)
+        for task, fargs in tasks:
+            fail = task(*fargs)
 
             if fail:
                 failure = True
