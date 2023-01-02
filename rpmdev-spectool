@@ -386,10 +386,10 @@ class Spec:
 
         try:
             self._get_file(value, directory, force, dry)
-            return True
+            return False
 
         except IOError:
-            return False
+            return True
 
     def get_patch(self, number: int, directory: str, force: bool, dry: bool, value: str = None):
         if not value:
@@ -397,10 +397,10 @@ class Spec:
 
         try:
             self._get_file(value, directory, force, dry)
-            return True
+            return False
 
         except IOError:
-            return False
+            return True
 
     def get_sources(self, directory: str, force: bool, dry: bool):
         failure = False
